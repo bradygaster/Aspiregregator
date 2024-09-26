@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Aspiregregator;
+namespace Aspiregregator.Frontend;
 
 public static class SlugGenerator
 {

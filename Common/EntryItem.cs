@@ -6,7 +6,7 @@ public class EntryItem
     public required string Link { get; set; }
     public required string Description { get; set; }
     public DateTimeOffset PublishDate { get; set; }
-    public string? Category { get; set; }
+    public DateTimeOffset UpdatedDate { get; set; }
 
     public class EntryImage
     {
@@ -15,6 +15,5 @@ public class EntryItem
         public string Link { get; set; }
         public int Height { get; set; }
         public int Width { get; set; }
-
     }
 }
