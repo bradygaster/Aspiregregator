@@ -1,5 +1,7 @@
+using Aspiregregator;
+using Aspiregregator.Frontend.Components;
+using Aspiregregator.Frontend.Services;
 using Microsoft.FluentUI.AspNetCore.Components;
-using Frontend.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddFluentUIComponents();
+
+// Add front end dependencies
+builder.Services.AddSingleton<ISourceProvider, SampleSourceProvider>();
 
 var app = builder.Build();
 
@@ -19,11 +24,10 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
 app.UseAntiforgery();
-
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
+

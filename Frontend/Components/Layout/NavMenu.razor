@@ -1,4 +1,5 @@
 ﻿@rendermode InteractiveServer
+@inject ISourceProvider sourceProvider
 
 <div class="navmenu">
     <input type="checkbox" title="Menu expand/collapse toggle" id="navmenu-toggle" class="navmenu-icon" />
@@ -6,12 +7,20 @@
     <nav class="sitenav" aria-labelledby="main-menu">
         <FluentNavMenu Id="main-menu" Collapsible="true" Width="250" Title="Navigation menu" @bind-Expanded="expanded" CustomToggle="true">
             <FluentNavLink Href="/" Match="NavLinkMatch.All" Icon="@(new Icons.Regular.Size20.Home())" IconColor="Color.Accent">Home</FluentNavLink>
-            <FluentNavLink Href="counter" Icon="@(new Icons.Regular.Size20.NumberSymbolSquare())" IconColor="Color.Accent">Counter</FluentNavLink>
-            <FluentNavLink Href="weather" Icon="@(new Icons.Regular.Size20.WeatherPartlyCloudyDay())" IconColor="Color.Accent">Weather</FluentNavLink>
+            @foreach (var source in sources)
+            {
+                <FluentNavLink Href="@string.Format($"entries/{source.GetSlug()}")" Icon="@(new Icons.Regular.Size20.Book())" IconColor="Color.Accent">@source.Name</FluentNavLink>
+            }
         </FluentNavMenu>
     </nav>
 </div>
 
 @code {
     private bool expanded = true;
+    private IEnumerable<SourceItem> sources = new List<SourceItem>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        sources = await sourceProvider.GetSourcesAsync();
+    }
 }

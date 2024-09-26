@@ -1,0 +1,56 @@
+﻿@page "/entries/{Slug}"
+@inject ISourceProvider sourceProvider
+
+<PageTitle>Entries for @selectedSource?.Name</PageTitle>
+
+<h1>Entries for @selectedSource?.Name</h1>
+
+<p>Here are the entries for the source @selectedSource?.Name.</p>
+
+@if (entries == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <FluentGrid AdaptiveRendering="true">
+        @foreach (var item in entries)
+        {
+            <FluentCard Width="400px" Height="400px" style="margin: 10px;">
+                <div style="font-weight: bold; padding-bottom: 10px;">
+                    <a href="@item.Link">@item.Title</a>
+                </div>
+                <div>
+                    @((MarkupString)item.Description)
+                </div>
+
+            </FluentCard>
+        }
+    </FluentGrid>
+}
+
+@code {
+    private IQueryable<EntryItem>? entries;
+    private SourceItem? selectedSource;
+
+    [Parameter]
+    public string? Slug { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var sources = await sourceProvider.GetSourcesAsync();
+        selectedSource = sources.FirstOrDefault(x => x.GetSlug() == Slug);
+        if (selectedSource is not null)
+        {
+            entries = (await sourceProvider.GetEntriesAsync(selectedSource)).AsQueryable();
+        }
+    }
+
+    private class WeatherForecast
+    {
+        public DateOnly Date { get; set; }
+        public int TemperatureC { get; set; }
+        public string? Summary { get; set; }
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+}

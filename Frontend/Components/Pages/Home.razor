@@ -1,7 +1,50 @@
 ﻿@page "/"
+@using Humanizer
+@inject ISourceProvider sourceProvider
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Aspiregregator</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Aspiregregator</h1>
 
-Welcome to your new Fluent Blazor app.
+<p>Aspiregregator is a simple RSS/ATOM reader written using .NET Aspire</p>
+
+<FluentDataGrid Items="@recentEntries" TGridItem="EntryItemWithSourceName">
+    <TemplateColumn TGridItem="EntryItemWithSourceName" Width="10%">
+        <div>@context.DisplayDate</div>
+    </TemplateColumn>
+    <PropertyColumn Property="@(p => p.Source)" Sortable="false" Width="15%" />
+    <TemplateColumn TGridItem="EntryItemWithSourceName" Width="75%">
+        <a href="@context.Link">@context.Title</a>
+    </TemplateColumn>
+</FluentDataGrid>
+
+@code
+{
+    JustifyContent Justification = JustifyContent.FlexStart;
+    int Spacing = 3;
+    IQueryable<EntryItemWithSourceName>? recentEntries;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var sources = await sourceProvider.GetSourcesAsync();
+        List<EntryItemWithSourceName> entries = new List<EntryItemWithSourceName>();
+        foreach (var source in sources)
+        {
+            var sourceEntries = await sourceProvider.GetEntriesAsync(source);
+            foreach (var entry in sourceEntries)
+            {
+                entries.Add(new EntryItemWithSourceName(entry, source));
+            }
+        }
+        recentEntries = entries.OrderByDescending(x => x.PublishedDate).AsQueryable();
+    }
+
+    public class EntryItemWithSourceName(EntryItem baseItem, SourceItem source)
+    {
+        public string Title => baseItem.Title;
+        public string Link => baseItem.Link;
+        public string Source => source.Name;
+        public DateTimeOffset PublishedDate => baseItem.PublishDate;
+        public string DisplayDate => PublishedDate.Humanize();
+    }
+}
