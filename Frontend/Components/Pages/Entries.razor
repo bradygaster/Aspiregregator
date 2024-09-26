@@ -1,4 +1,5 @@
 ﻿@page "/entries/{Slug}"
+@using Humanizer
 @inject ISourceProvider sourceProvider
 
 <PageTitle>Entries for @selectedSource?.Name</PageTitle>
@@ -17,12 +18,16 @@ else
         @foreach (var item in selectedSource.MostRecentItems)
         {
             <FluentCard Width="400px" Height="300px" style="margin: 10px;">
-                <div style="font-weight: bold; padding-bottom: 10px;">
-                    <a href="@item.Link">@item.Title</a>
-                </div>
-                <div>
-                    @item.GetTrimmedDescription(255)
-                </div>
+
+                <FluentStack Orientation="Orientation.Vertical"
+                             HorizontalAlignment="HorizontalAlignment.Left"
+                             VerticalAlignment="VerticalAlignment.Top">
+                    <div style="font-style: italic; font-size: .95em;">@item.GetDisplayDate().Humanize()</div>
+                    <div style="text-decoration: none; font-weight: bold; font-size: 1.2em;">
+                        <a target="_blank" href="@item.Link">@item.Title</a>
+                    </div>
+                    <div>@item.GetTrimmedDescription(255)</div>
+                </FluentStack>
 
             </FluentCard>
         }
