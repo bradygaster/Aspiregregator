@@ -14,6 +14,8 @@ builder.Services.AddFluentUIComponents();
 // Add front end dependencies
 builder.Services.AddSingleton<ISourceProvider, SampleSourceProvider>();
 builder.Services.AddScoped<HomePageViewModel>();
+builder.Services.AddScoped<NavMenuViewModel>();
+builder.Services.AddScoped<AddNewFeedFormViewModel>();
 
 var app = builder.Build();
 

@@ -1,22 +1,11 @@
-﻿@rendermode InteractiveServer
-@inject ISourceProvider sourceProvider
+﻿using Microsoft.AspNetCore.Components;
 
-<FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center">
-    <FluentTextField @bind-Value="FeedUri" Required="true">
-        <FluentIcon Value="@(new Icons.Regular.Size16.Globe())" Slot="start" Color="Color.Neutral" />
-    </FluentTextField>
-    <FluentButton IconStart="@(new Icons.Regular.Size16.Add())"
-                  Appearance="Appearance.Accent"
-                  OnClick="HandleSubmit" />
-    <FluentSpacer />
-    <div style="padding-top: 3px;">Aspiregregator</div>
-</FluentStack>
+namespace Aspiregregator.Frontend.ViewModels;
 
-
-@code {
+public class AddNewFeedFormViewModel(ISourceProvider sourceProvider)
+{
     public string FeedUri { get; set; } = string.Empty;
 
-    [Parameter]
     public EventCallback SourcesUpdated { get; set; }
 
     public async Task HandleSubmit()
@@ -52,3 +41,4 @@
         return false;
     }
 }
+

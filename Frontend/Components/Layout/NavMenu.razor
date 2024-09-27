@@ -1,17 +1,21 @@
 ﻿@inject ISourceProvider sourceProvider
+@inject NavMenuViewModel viewModel
 @rendermode InteractiveServer
 
 <div class="navmenu">
     <input type="checkbox" title="Menu expand/collapse toggle" id="navmenu-toggle" class="navmenu-icon" />
     <label for="navmenu-toggle" class="navmenu-icon"><FluentIcon Value="@(new Icons.Regular.Size20.Navigation())" Color="Color.Fill" /></label>
     <nav class="sitenav" aria-labelledby="main-menu">
-        <FluentNavMenu Id="main-menu" Collapsible="false" Width="250" Title="Navigation menu" @bind-Expanded="expanded" CustomToggle="true">
+        <FluentNavMenu Id="main-menu" Collapsible="false" Width="250" Title="Navigation menu" @bind-Expanded="viewModel.Expanded" CustomToggle="true">
             <FluentNavLink Href="/" Match="NavLinkMatch.All" Icon="@(new Icons.Regular.Size20.Home())" IconColor="Color.Accent">Recent</FluentNavLink>
-            @foreach (var source in sources)
+            @if (viewModel.Sources is not null)
             {
-                if (!string.IsNullOrEmpty(source.Name))
+                @foreach (var source in viewModel.Sources)
                 {
-                    <FluentNavLink Href="@string.Format($"entries/{source.GetSlug()}")" Icon="@(new Icons.Regular.Size20.Book())" IconColor="Color.Accent">@source.Name</FluentNavLink>
+                    if (!string.IsNullOrEmpty(source.Name))
+                    {
+                        <FluentNavLink Href="@string.Format($"entries/{source.GetSlug()}")" Icon="@(new Icons.Regular.Size20.Book())" IconColor="Color.Accent">@source.Name</FluentNavLink>
+                    }
                 }
             }
         </FluentNavMenu>
@@ -19,14 +23,12 @@
 </div>
 
 @code {
-    private bool expanded = true;
-    private IEnumerable<SourceItem> sources = new List<SourceItem>();
-
-    protected override async Task OnInitializedAsync() => await RefreshSources();
+    protected override async Task OnInitializedAsync() 
+        => await viewModel.RefreshSources();
 
     internal async Task RefreshSources()
     {
-        sources = await sourceProvider.GetSourcesAsync();
+        await viewModel.RefreshSources();
         await InvokeAsync(StateHasChanged);
     }
 }

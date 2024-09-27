@@ -1,0 +1,27 @@
+﻿@rendermode InteractiveServer
+@inject ISourceProvider sourceProvider
+@inject AddNewFeedFormViewModel viewModel
+
+<FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center">
+    <FluentTextField @bind-Value="viewModel.FeedUri" Required="true">
+        <FluentIcon Value="@(new Icons.Regular.Size16.Globe())" Slot="start" Color="Color.Neutral" />
+    </FluentTextField>
+    <FluentButton IconStart="@(new Icons.Regular.Size16.Add())"
+                  Appearance="Appearance.Accent"
+                  OnClick="viewModel.HandleSubmit" />
+    <FluentSpacer />
+    <div style="padding-top: 3px;">Aspiregregator</div>
+</FluentStack>
+
+
+@code {
+
+#pragma warning disable BL0007
+    [Parameter]
+    public EventCallback SourcesUpdated
+    {
+        get { return viewModel.SourcesUpdated; }
+        set { viewModel.SourcesUpdated = value; }
+    }
+#pragma warning restore BL0007
+}
