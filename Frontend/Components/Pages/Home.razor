@@ -37,7 +37,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        viewModel = new HomePageViewModel(sourceProvider);
         await viewModel.RefreshAsync();
     }
 
