@@ -1,67 +1,60 @@
 ﻿@page "/entries/{Slug}"
 @rendermode InteractiveServer
 @inject ISourceProvider sourceProvider
-@using Humanizer
+@inject EntriesPageViewModel viewModel
 
-<PageTitle>Entries for @selectedSource?.Name</PageTitle>
+@if(viewModel.SelectedSource is not null)
+{
+    <PageTitle>Entries for @viewModel.SelectedSource?.Name</PageTitle>
+}
+else
+{
+    <PageTitle>No source selected</PageTitle>
+}
 
-<FluentHeader>
-    <AddNewFeedForm SourcesUpdated="OnSourcesUpdated" />
-</FluentHeader>
-<FluentStack Class="main" Orientation="Orientation.Horizontal" Width="100%">
-    <NavMenu @ref="navMenu" />
-    <FluentBodyContent Class="body-content">
-        <div class="content">
-            <h1>Entries for @selectedSource?.Name</h1>
-            <p>Here are the entries for the source @selectedSource?.Name.</p>
+<PageLayout>
+    <BodyContent>
+        @if (viewModel.SelectedSource is not null)
+        {
+            <h1>Entries for @viewModel.SelectedSource?.Name</h1>
+            <p>Here are the entries for the source @viewModel.SelectedSource?.Name.</p>
 
-            @if (selectedSource == null)
-            {
-                <p><em>Loading...</em></p>
-            }
-            else
-            {
-                <FluentGrid AdaptiveRendering="true">
-                    @foreach (var item in selectedSource.MostRecentItems)
-                    {
-                        <FluentCard Width="400px" Height="250px" style="margin: 10px;">
+            <FluentGrid AdaptiveRendering="true">
+                @foreach (var item in viewModel.SelectedSource!.MostRecentItems)
+                {
+                    <FluentCard Width="400px" Height="250px" style="margin: 10px;">
 
-                            <FluentStack Orientation="Orientation.Vertical"
-                                         HorizontalAlignment="HorizontalAlignment.Left"
-                                         VerticalAlignment="VerticalAlignment.Top">
-                                <div style="font-style: italic; font-size: .95em;">@item.GetDisplayDate().Humanize()</div>
-                                <div style="text-decoration: none; font-weight: bold; font-size: 1.2em;">
-                                    <a target="_blank" href="@item.Link">@item.Title</a>
-                                </div>
-                                <div>@item.GetTrimmedDescription(255)</div>
-                            </FluentStack>
+                        <FluentStack Orientation="Orientation.Vertical"
+                                     HorizontalAlignment="HorizontalAlignment.Left"
+                                     VerticalAlignment="VerticalAlignment.Top">
+                            <div style="font-style: italic; font-size: .95em;">@item.GetDisplayDate().Humanize()</div>
+                            <div style="text-decoration: none; font-weight: bold; font-size: 1.2em;">
+                                <a target="_blank" href="@item.Link">@item.Title</a>
+                            </div>
+                            <div>@item.GetTrimmedDescription(255)</div>
+                        </FluentStack>
 
-                        </FluentCard>
-                    }
-                </FluentGrid>
-            }
-        </div>
-    </FluentBodyContent>
-</FluentStack>
+                    </FluentCard>
+                }
+            </FluentGrid>
+        }
+        else
+        {
+            <PageTitle>No source selected</PageTitle>
+        }
+    </BodyContent>
+</PageLayout>
 
 @code {
-    private SourceItem? selectedSource;
-    NavMenu? navMenu;
 
     [Parameter]
     public string? Slug { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        var sources = await sourceProvider.GetSourcesAsync();
-        selectedSource = sources.FirstOrDefault(x => x.GetSlug() == Slug);
-    }
-
-    protected async Task OnSourcesUpdated()
-    {
-        if (navMenu is not null)
+        if (!string.IsNullOrEmpty(Slug))
         {
-            await navMenu.RefreshSources();
+            await viewModel.SelectSource(Slug);
         }
     }
 }

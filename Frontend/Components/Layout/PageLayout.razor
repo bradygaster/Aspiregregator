@@ -1,0 +1,37 @@
+﻿@rendermode InteractiveServer
+
+<FluentHeader>
+    <AddNewFeedForm @ref="addNewFeedForm" SourcesUpdated="OnSourcesUpdated" />
+</FluentHeader>
+<FluentStack Class="main" Orientation="Orientation.Horizontal" Width="100%">
+    <NavMenu @ref="navMenu" />
+    <FluentBodyContent Class="body-content">
+        <div class="content">
+            @BodyContent
+        </div>
+    </FluentBodyContent>
+</FluentStack>
+
+@code
+{
+    NavMenu? navMenu;
+    AddNewFeedForm? addNewFeedForm;
+
+    [Parameter] 
+    public RenderFragment? BodyContent { get; set; }
+
+    [Parameter]
+    public EventCallback UpdateReceived { get; set; }
+
+    protected async Task OnSourcesUpdated()
+    {
+        if (navMenu is not null)
+        {
+            await navMenu.RefreshSources();
+            if(UpdateReceived.HasDelegate)
+            {
+                await UpdateReceived.InvokeAsync();
+            }
+        }
+    }
+}

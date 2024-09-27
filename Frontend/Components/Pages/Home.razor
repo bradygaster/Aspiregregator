@@ -2,50 +2,28 @@
 @rendermode InteractiveServer
 @inject ISourceProvider sourceProvider
 @inject HomePageViewModel viewModel
-@using Humanizer
-@using Aspiregregator.Frontend.ViewModels
 
 <PageTitle>Aspiregregator</PageTitle>
 
-<FluentHeader>
-    <AddNewFeedForm SourcesUpdated="OnSourcesUpdated" />
-</FluentHeader>
-<FluentStack Class="main" Orientation="Orientation.Horizontal" Width="100%">
-    <NavMenu @ref="navMenu" />
-    <FluentBodyContent Class="body-content">
-        <div class="content">
-            <h1>Recent Updates</h1>
-            <p>Here is a list of recent updates across your feeds.</p>
-            <FluentDataGrid Items="@viewModel?.EntryItems" TGridItem="EntryItemViewModel">
-                <TemplateColumn TGridItem="EntryItemViewModel" Width="10%" Title="Updated">
-                    <div>@context.DisplayDate.Humanize()</div>
-                </TemplateColumn>
-                <PropertyColumn Property="@(p => p.Source)" Sortable="false" Width="20%" />
-                <TemplateColumn TGridItem="EntryItemViewModel" Width="70%" Title="Title">
-                    <a target="_blank" href="@context.Link">@context.Title</a>
-                </TemplateColumn>
-            </FluentDataGrid>
-        </div>
-    </FluentBodyContent>
-</FluentStack>
-
-
+<PageLayout UpdateReceived="OnUpdateReceived">
+    <BodyContent>
+        <h1>Recent Updates</h1>
+        <p>Here is a list of recent updates across your feeds.</p>
+        <FluentDataGrid Items="@viewModel?.EntryItems" TGridItem="EntryItemViewModel">
+            <TemplateColumn TGridItem="EntryItemViewModel" Width="10%" Title="Updated">
+                <div>@context.DisplayDate.Humanize()</div>
+            </TemplateColumn>
+            <PropertyColumn Property="@(p => p.Source)" Sortable="false" Width="20%" />
+            <TemplateColumn TGridItem="EntryItemViewModel" Width="70%" Title="Title">
+                <a target="_blank" href="@context.Link">@context.Title</a>
+            </TemplateColumn>
+        </FluentDataGrid>
+    </BodyContent>
+</PageLayout>
 
 @code
 {
-    NavMenu? navMenu;
+    protected override async Task OnInitializedAsync() => await viewModel.RefreshAsync();
 
-    protected override async Task OnInitializedAsync()
-    {
-        await viewModel.RefreshAsync();
-    }
-
-    protected async Task OnSourcesUpdated()
-    {
-        if (navMenu is not null)
-        {
-            await navMenu.RefreshSources();
-            await viewModel.RefreshAsync();
-        }
-    }
+    protected async Task OnUpdateReceived() => await viewModel.RefreshAsync();
 }
