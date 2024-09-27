@@ -3,7 +3,7 @@
 @inject AddNewFeedFormViewModel viewModel
 
 <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center">
-    <FluentTextField @bind-Value="viewModel.FeedUri" Required="true">
+    <FluentTextField @bind-Value="viewModel.FeedUri" Required="true" Style="min-width: 280px;">
         <FluentIcon Value="@(new Icons.Regular.Size16.Globe())" Slot="start" Color="Color.Neutral" />
     </FluentTextField>
     <FluentButton IconStart="@(new Icons.Regular.Size16.Add())"

@@ -17,14 +17,13 @@ public class SampleSourceProvider : ISourceProvider
         => Task.FromResult(Sources.FirstOrDefault(x => x.Endpoint == endpoint));
 
     public Task<IEnumerable<SourceItem>> GetSourcesAsync()
-        => Task.FromResult(Sources.AsEnumerable());
+        => Task.FromResult(Sources.OrderBy(x => x.Name).AsEnumerable());
 
     public Task SaveSourceItemAsync(SourceItem item)
     {
         if (!Sources.Any(x => x.Endpoint == item.Endpoint))
         {
             Sources.Add(item);
-            Sources = Sources.OrderBy(x => x.Name).ToList();
         }
 
         return Task.CompletedTask;
