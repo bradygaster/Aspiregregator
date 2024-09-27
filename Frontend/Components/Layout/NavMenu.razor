@@ -2,11 +2,11 @@
 @inject NavMenuViewModel viewModel
 @rendermode InteractiveServer
 
-<div class="navmenu">
+<div class="navmenu" style="width: 100%;">
     <input type="checkbox" title="Menu expand/collapse toggle" id="navmenu-toggle" class="navmenu-icon" />
     <label for="navmenu-toggle" class="navmenu-icon"><FluentIcon Value="@(new Icons.Regular.Size20.Navigation())" Color="Color.Fill" /></label>
     <nav class="sitenav" aria-labelledby="main-menu">
-        <FluentNavMenu Id="main-menu" Collapsible="false" Width="250" Title="Navigation menu" @bind-Expanded="viewModel.Expanded" CustomToggle="true">
+        <FluentNavMenu Id="main-menu" Collapsible="false" Title="Navigation menu" @bind-Expanded="viewModel.Expanded" CustomToggle="true">
             <FluentNavLink Href="/" Match="NavLinkMatch.All" Icon="@(new Icons.Regular.Size20.Home())" IconColor="Color.Accent">Recent</FluentNavLink>
             @if (viewModel.Sources is not null)
             {

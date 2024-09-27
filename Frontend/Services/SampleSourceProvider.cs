@@ -10,7 +10,8 @@ public class SampleSourceProvider : ISourceProvider
         //new SourceItem { Endpoint = "https://devblogs.microsoft.com/dotnet/feed/" },
         //new SourceItem { Endpoint = "https://devblogs.microsoft.com/visualstudio/feed/"  },
         //new SourceItem { Endpoint = "https://github.com/dotnet/aspire/commits.atom"  },
-        //new SourceItem { Endpoint = "https://github.com/dotnet/aspire/releases.atom"  }
+        //new SourceItem { Endpoint = "https://github.com/dotnet/aspire/releases.atom"  },
+        new SourceItem { Endpoint = "https://github.com/bradygaster/Aspiregregator/commits.atom"  }
     };
 
     public Task<SourceItem?> GetSourceItemAsync(string endpoint)
