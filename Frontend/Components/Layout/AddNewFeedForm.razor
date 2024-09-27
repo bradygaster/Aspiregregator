@@ -1,0 +1,46 @@
+﻿@inherits LayoutComponentBase
+@rendermode InteractiveServer
+@inject ISourceProvider sourceProvider
+
+<FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center">
+    <FluentTextField @bind-Value="FeedUri" Required="true">
+        <FluentIcon Value="@(new Icons.Regular.Size16.Globe())" Slot="start" Color="Color.Neutral" />
+    </FluentTextField>
+    <FluentButton IconStart="@(new Icons.Regular.Size16.Add())"
+                  Appearance="Appearance.Accent"
+                  OnClick="HandleSubmit" />
+    <FluentSpacer />
+    <div style="padding-top: 3px;">Aspiregregator</div>
+</FluentStack>
+
+
+@code {
+    public string FeedUri { get; set; } = string.Empty;
+
+    public async Task HandleSubmit()
+    {
+        if (IsValidUrl())
+        {
+            var newSource = new SourceItem { Endpoint = FeedUri };
+            await sourceProvider.SaveSourceItemAsync(newSource);
+            await sourceProvider.UpdateAsync(newSource);
+            FeedUri = string.Empty;
+        }
+    }
+
+    public bool IsValidUrl()
+    {
+        if (string.IsNullOrWhiteSpace(FeedUri))
+        {
+            return false;
+        }
+
+        if (Uri.TryCreate(FeedUri, UriKind.Absolute, out Uri? uriResult) &&
+            (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
+        {
+            return true;
+        }
+
+        return false;
+    }
+}

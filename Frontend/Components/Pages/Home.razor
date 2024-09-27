@@ -1,28 +1,31 @@
 ﻿@page "/"
 @using Humanizer
 @using Aspiregregator.Frontend.ViewModels
-@inject ISourceProvider sourceProvider
+@inject ISourceProvider sourceProvider 
 
 <PageTitle>Aspiregregator</PageTitle>
 
-<h1>Aspiregregator</h1>
+<h1>Recent Updates</h1>
 
-<p>Aspiregregator is a simple RSS/ATOM reader written using .NET Aspire</p>
+<p>Here is a list of recent updates across your feeds.</p>
 
-<FluentDataGrid Items="@recentEntries" TGridItem="EntryItemViewModel">
-    <TemplateColumn TGridItem="EntryItemViewModel" Width="10%">
+<FluentDataGrid Items="@viewModel?.EntryItems" TGridItem="EntryItemViewModel">
+    <TemplateColumn TGridItem="EntryItemViewModel" Width="10%" Title="Updated">
         <div>@context.DisplayDate.Humanize()</div>
     </TemplateColumn>
-    <PropertyColumn Property="@(p => p.Source)" Sortable="false" Width="15%" />
-    <TemplateColumn TGridItem="EntryItemViewModel" Width="75%">
+    <PropertyColumn Property="@(p => p.Source)" Sortable="false" Width="20%" />
+    <TemplateColumn TGridItem="EntryItemViewModel" Width="70%" Title="Title">
         <a target="_blank" href="@context.Link">@context.Title</a>
     </TemplateColumn>
 </FluentDataGrid>
 
 @code
 {
-    IQueryable<EntryItemViewModel>? recentEntries;
+    HomePageViewModel? viewModel;
 
     protected override async Task OnInitializedAsync()
-        => recentEntries = await new HomePageViewModel(sourceProvider).RefreshAsync();
+    {
+        viewModel = new HomePageViewModel(sourceProvider);
+        await viewModel.RefreshAsync();
+    }
 }
