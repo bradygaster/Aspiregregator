@@ -1,41 +1,52 @@
 ﻿@page "/entries/{Slug}"
-@using Humanizer
+@rendermode InteractiveServer
 @inject ISourceProvider sourceProvider
+@using Humanizer
 
 <PageTitle>Entries for @selectedSource?.Name</PageTitle>
 
-<h1>Entries for @selectedSource?.Name</h1>
+<FluentHeader>
+    <AddNewFeedForm SourcesUpdated="OnSourcesUpdated" />
+</FluentHeader>
+<FluentStack Class="main" Orientation="Orientation.Horizontal" Width="100%">
+    <NavMenu @ref="navMenu" />
+    <FluentBodyContent Class="body-content">
+        <div class="content">
+            <h1>Entries for @selectedSource?.Name</h1>
+            <p>Here are the entries for the source @selectedSource?.Name.</p>
 
-<p>Here are the entries for the source @selectedSource?.Name.</p>
+            @if (selectedSource == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else
+            {
+                <FluentGrid AdaptiveRendering="true">
+                    @foreach (var item in selectedSource.MostRecentItems)
+                    {
+                        <FluentCard Width="400px" Height="250px" style="margin: 10px;">
 
-@if (selectedSource == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <FluentGrid AdaptiveRendering="true">
-        @foreach (var item in selectedSource.MostRecentItems)
-        {
-            <FluentCard Width="400px" Height="250px" style="margin: 10px;">
+                            <FluentStack Orientation="Orientation.Vertical"
+                                         HorizontalAlignment="HorizontalAlignment.Left"
+                                         VerticalAlignment="VerticalAlignment.Top">
+                                <div style="font-style: italic; font-size: .95em;">@item.GetDisplayDate().Humanize()</div>
+                                <div style="text-decoration: none; font-weight: bold; font-size: 1.2em;">
+                                    <a target="_blank" href="@item.Link">@item.Title</a>
+                                </div>
+                                <div>@item.GetTrimmedDescription(255)</div>
+                            </FluentStack>
 
-                <FluentStack Orientation="Orientation.Vertical"
-                             HorizontalAlignment="HorizontalAlignment.Left"
-                             VerticalAlignment="VerticalAlignment.Top">
-                    <div style="font-style: italic; font-size: .95em;">@item.GetDisplayDate().Humanize()</div>
-                    <div style="text-decoration: none; font-weight: bold; font-size: 1.2em;">
-                        <a target="_blank" href="@item.Link">@item.Title</a>
-                    </div>
-                    <div>@item.GetTrimmedDescription(255)</div>
-                </FluentStack>
-
-            </FluentCard>
-        }
-    </FluentGrid>
-}
+                        </FluentCard>
+                    }
+                </FluentGrid>
+            }
+        </div>
+    </FluentBodyContent>
+</FluentStack>
 
 @code {
     private SourceItem? selectedSource;
+    NavMenu? navMenu;
 
     [Parameter]
     public string? Slug { get; set; }
@@ -44,5 +55,13 @@ else
     {
         var sources = await sourceProvider.GetSourcesAsync();
         selectedSource = sources.FirstOrDefault(x => x.GetSlug() == Slug);
+    }
+
+    protected async Task OnSourcesUpdated()
+    {
+        if (navMenu is not null)
+        {
+            await navMenu.RefreshSources();
+        }
     }
 }

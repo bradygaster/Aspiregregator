@@ -22,8 +22,11 @@
     private bool expanded = true;
     private IEnumerable<SourceItem> sources = new List<SourceItem>();
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync() => await RefreshSources();
+
+    internal async Task RefreshSources()
     {
         sources = await sourceProvider.GetSourcesAsync();
+        await InvokeAsync(StateHasChanged);
     }
 }

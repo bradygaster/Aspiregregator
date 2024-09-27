@@ -1,6 +1,7 @@
 using Aspiregregator;
 using Aspiregregator.Frontend.Components;
 using Aspiregregator.Frontend.Services;
+using Aspiregregator.Frontend.ViewModels;
 using Microsoft.FluentUI.AspNetCore.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,7 @@ builder.Services.AddFluentUIComponents();
 
 // Add front end dependencies
 builder.Services.AddSingleton<ISourceProvider, SampleSourceProvider>();
+builder.Services.AddScoped<HomePageViewModel>();
 
 var app = builder.Build();
 
