@@ -7,7 +7,8 @@ public class HomePageViewModel(ISourceProvider sourceProvider)
     public async Task RefreshAsync()
     {
         var sources = await sourceProvider.GetSourcesAsync();
-        List<EntryItemViewModel> entries = new List<EntryItemViewModel>();
+
+        List<EntryItemViewModel> entries = [];
         foreach (var source in sources)
         {
             var sourceEntries = await sourceProvider.UpdateAsync(source);

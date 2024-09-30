@@ -24,15 +24,16 @@ else
                 {
                     <FluentCard Width="400px" Height="250px" style="margin: 10px;">
 
-                        <FluentStack Orientation="Orientation.Vertical"
-                                     HorizontalAlignment="HorizontalAlignment.Left"
-                                     VerticalAlignment="VerticalAlignment.Top">
-                            <div style="font-style: italic; font-size: .95em;">@item.GetDisplayDate().Humanize()</div>
-                            <div style="text-decoration: none; font-weight: bold; font-size: 1.2em;">
-                                <a target="_blank" href="@item.Link">@item.Title</a>
-                            </div>
-                            <div>@item.GetTrimmedDescription(255)</div>
-                        </FluentStack>
+                <FluentStack Orientation="Orientation.Vertical"
+                             HorizontalAlignment="HorizontalAlignment.Left"
+                             VerticalAlignment="VerticalAlignment.Top">
+                    <img src="@item.Images?.FirstOrDefault()" />
+                    <div style="font-style: italic; font-size: .95em;">@item.GetDisplayDate().Humanize()</div>
+                    <div style="text-decoration: none; font-weight: bold; font-size: 1.2em;">
+                        <a target="_blank" href="@item.Link">@item.Title</a>
+                    </div>
+                    <div>@item.GetTrimmedDescription(255)</div>
+                </FluentStack>
 
                     </FluentCard>
                 }

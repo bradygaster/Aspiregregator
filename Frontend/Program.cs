@@ -17,6 +17,7 @@ builder.Services.AddScoped<HomePageViewModel>();
 builder.Services.AddScoped<EntriesPageViewModel>();
 builder.Services.AddScoped<NavMenuViewModel>();
 builder.Services.AddScoped<AddNewFeedFormViewModel>();
+builder.Services.AddSingleton<AppState>();
 
 var app = builder.Build();
 

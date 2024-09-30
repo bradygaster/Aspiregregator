@@ -1,49 +1,77 @@
 ﻿using SimpleFeedReader;
+using System.Collections.Concurrent;
 
 namespace Aspiregregator.Frontend.Services;
 
-public class SampleSourceProvider : ISourceProvider
+public sealed class SampleSourceProvider(AppState appState) : ISourceProvider
 {
-    private static List<SourceItem> Sources = new()
-    {
-        //new SourceItem { Endpoint = "https://devblogs.microsoft.com/dotnet/feed/" },
-        //new SourceItem { Endpoint = "https://devblogs.microsoft.com/visualstudio/feed/"  },
-        //new SourceItem { Endpoint = "https://www.hanselman.com/blog/feed/rss" },
-        //new SourceItem { Endpoint = "https://github.com/dotnet/aspire/releases.atom"  }
-        //new SourceItem { Endpoint = "https://github.com/dotnet/aspire/commits.atom"  },
-    };
+    private readonly ConcurrentDictionary<string, SourceItem> Sources =
+      new(StringComparer.OrdinalIgnoreCase)
+      {
+          //new SourceItem { Endpoint = "https://devblogs.microsoft.com/dotnet/feed/" },
+          //new SourceItem { Endpoint = "https://devblogs.microsoft.com/visualstudio/feed/"  },
+          //new SourceItem { Endpoint = "https://www.hanselman.com/blog/feed/rss" },
+          //new SourceItem { Endpoint = "https://github.com/dotnet/aspire/releases.atom"  }
+          //new SourceItem { Endpoint = "https://github.com/dotnet/aspire/commits.atom"  },
+      };
 
     public Task<SourceItem?> GetSourceItemAsync(string endpoint)
-        => Task.FromResult(Sources.FirstOrDefault(x => x.Endpoint == endpoint));
+      => Task.FromResult(Sources.TryGetValue(endpoint, out var item) ? item : null);
 
     public Task<IEnumerable<SourceItem>> GetSourcesAsync()
-        => Task.FromResult(Sources.OrderBy(x => x.Name).AsEnumerable());
+      => Task.FromResult(Sources.Values.OrderBy(x => x.Name).AsEnumerable());
 
     public Task SaveSourceItemAsync(SourceItem item)
     {
-        if (!Sources.Any(x => x.Endpoint == item.Endpoint))
-        {
-            Sources.Add(item);
-        }
+        Sources[item.Endpoint] = item;
 
         return Task.CompletedTask;
     }
 
     public async Task<SourceItem> UpdateAsync(SourceItem source)
     {
-        source.MostRecentItems = new FeedReader().RetrieveFeed(source.Endpoint).Select(x => new EntryItem
+        var retrieveTask = Task.Run<List<EntryItem>>(() =>
         {
-            Title = x.Title,
-            Description = x.Summary,
-            Link = x.Uri.AbsoluteUri,
-            PublishDate = x.PublishDate,
-            UpdatedDate = x.LastUpdatedDate
-        }).ToList();
+            var feedItems = new FeedReader().RetrieveFeed(source.Endpoint);
 
-        source.Name = (await CodeHollow.FeedReader.FeedReader.ReadAsync(source.Endpoint)).Title;
-        Sources.First(x => x.Endpoint == source.Endpoint).MostRecentItems = source.MostRecentItems;
-        Sources.First(x => x.Endpoint == source.Endpoint).Name = source.Name;
-        Sources.First(x => x.Endpoint == source.Endpoint).LastUpdate = source.LastUpdate;
+            return
+            [
+              ..feedItems.Select(x => new EntryItem
+                {
+                  Title = x.Title,
+                  Description = x.Summary,
+                  Link = x.Uri.AbsoluteUri,
+                  PublishDate = x.PublishDate,
+                  UpdatedDate = x.LastUpdatedDate,
+                  Images = x.Images
+                })
+            ];
+        });
+
+        var getFeedTask = CodeHollow.FeedReader.FeedReader.ReadAsync(source.Endpoint);
+
+        await Task.WhenAll(retrieveTask, getFeedTask);
+
+        source.MostRecentItems = retrieveTask.Result;
+
+        var feed = getFeedTask.Result;
+        source.Name = feed.Title;
+
+        foreach (var item in source.MostRecentItems)
+        {
+            if (item.Images.Any() is false)
+            {
+                var rssItem = feed.Items.FirstOrDefault(i => i.Link == item.Link);
+                //if (rssItem is { SpecificItem.Element.})
+                //{
+                //
+                //}
+            }
+        }
+
+        Sources[source.Endpoint] = source;
+
+        appState.AppStateChanged();
 
         return source;
     }

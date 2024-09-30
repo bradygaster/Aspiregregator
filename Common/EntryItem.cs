@@ -7,6 +7,7 @@ public class EntryItem
     public required string Description { get; set; }
     public DateTimeOffset PublishDate { get; set; }
     public DateTimeOffset UpdatedDate { get; set; }
+    public IEnumerable<Uri> Images { get; set; } = [];
 
     public class EntryImage
     {

@@ -1,27 +1,48 @@
-﻿@rendermode InteractiveServer
-@inject ISourceProvider sourceProvider
-@inject AddNewFeedFormViewModel viewModel
+@rendermode InteractiveServer
+@inject ISourceProvider SourceProvider
+@inject AppState State
 
 <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center">
-    <FluentTextField @bind-Value="viewModel.FeedUri" Required="true" Style="min-width: 280px;">
+    <FluentTextField @bind-Value="FeedUri" Required="true" Style="min-width: 30vw;">
         <FluentIcon Value="@(new Icons.Regular.Size16.Globe())" Slot="start" Color="Color.Neutral" />
     </FluentTextField>
     <FluentButton IconStart="@(new Icons.Regular.Size16.Add())"
-                  Appearance="Appearance.Accent"
-                  OnClick="viewModel.HandleSubmit" />
+                  Appearance="Appearance.Neutral"
+                  OnClick="HandleSubmit" />
     <FluentSpacer />
     <div style="padding-top: 3px;">Aspiregregator</div>
 </FluentStack>
 
-
 @code {
 
-#pragma warning disable BL0007
-    [Parameter]
-    public EventCallback SourcesUpdated
+    public string FeedUri { get; set; } = string.Empty;
+
+    public async Task HandleSubmit()
     {
-        get { return viewModel.SourcesUpdated; }
-        set { viewModel.SourcesUpdated = value; }
+        if (IsValidUrl())
+        {
+            var newSource = new SourceItem { Endpoint = FeedUri };
+            await SourceProvider.SaveSourceItemAsync(newSource);
+            await SourceProvider.UpdateAsync(newSource);
+            FeedUri = string.Empty;
+            
+            State.AppStateChanged();
+        }
     }
-#pragma warning restore BL0007
+
+    public bool IsValidUrl()
+    {
+        if (string.IsNullOrWhiteSpace(FeedUri))
+        {
+            return false;
+        }
+
+        if (Uri.TryCreate(FeedUri, UriKind.Absolute, out Uri? uriResult) &&
+            (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
+        {
+            return true;
+        }
+
+        return false;
+    }
 }
