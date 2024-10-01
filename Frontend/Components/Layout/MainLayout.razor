@@ -11,11 +11,13 @@
         <AuthorizeView>
             <Authorized>
                 <AddNewFeedForm />
-                <FluentAnchor style="margin-right: 20px;" Href="Account/Manage" Match="NavLinkMatch.All" IconEnd="@(new Icons.Regular.Size20.Person())" Appearance="Appearance.Neutral">My Account</FluentAnchor>
                 <form action="Account/Logout" method="post">
                     <AntiforgeryToken />
                     <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                    <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Neutral" IconEnd="@(new Icons.Regular.Size20.SignOut())">Sign out</FluentButton>
+                    <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center">
+                        <FluentAnchor Href="Account/Manage" Match="NavLinkMatch.All" IconEnd="@(new Icons.Regular.Size20.Person())" Appearance="Appearance.Neutral">My Account</FluentAnchor>
+                        <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Neutral" IconEnd="@(new Icons.Regular.Size20.SignOut())">Sign out</FluentButton>
+                    </FluentStack>
                 </form>
             </Authorized>
             <NotAuthorized>
@@ -23,7 +25,7 @@
                     <FluentSpacer />
                     <div style="padding-top: 3px;">Register or login to add feeds</div>
                     <FluentSpacer />
-                    <FluentAnchor style="margin-right: 2px;" Href="Account/Register" Match="NavLinkMatch.All" IconEnd="@(new Icons.Regular.Size20.Person())" Appearance="Appearance.Neutral">Register</FluentAnchor>
+                    <FluentAnchor style="margin-right: 12px;" Href="Account/Register" Match="NavLinkMatch.All" IconEnd="@(new Icons.Regular.Size20.Person())" Appearance="Appearance.Neutral">Register</FluentAnchor>
                     <FluentAnchor style="margin-right: 2px;" Href="Account/Login" Match="NavLinkMatch.All" IconEnd="@(new Icons.Regular.Size20.LockClosedKey())" Appearance="Appearance.Neutral">Sign in</FluentAnchor>
                 </FluentStack>
             </NotAuthorized>
