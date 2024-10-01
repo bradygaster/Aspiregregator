@@ -1,4 +1,6 @@
-﻿using SimpleFeedReader;
+﻿using CodeHollow.FeedReader;
+using CodeHollow.FeedReader.Feeds;
+using SimpleRssReader = SimpleFeedReader.FeedReader;
 using System.Collections.Concurrent;
 
 namespace Aspiregregator.Frontend.Services;
@@ -32,7 +34,8 @@ public sealed class SampleSourceProvider(AppState appState) : ISourceProvider
     {
         var retrieveTask = Task.Run<List<EntryItem>>(() =>
         {
-            var feedItems = new FeedReader().RetrieveFeed(source.Endpoint);
+            var reader = new SimpleRssReader();
+            var feedItems = reader.RetrieveFeed(source.Endpoint);
 
             return
             [
@@ -43,35 +46,70 @@ public sealed class SampleSourceProvider(AppState appState) : ISourceProvider
                   Link = x.Uri.AbsoluteUri,
                   PublishDate = x.PublishDate,
                   UpdatedDate = x.LastUpdatedDate,
-                  Images = x.Images
+                  Image = x.Images?.FirstOrDefault()
                 })
             ];
         });
 
-        var getFeedTask = CodeHollow.FeedReader.FeedReader.ReadAsync(source.Endpoint);
+        var getFeedTask = FeedReader.ReadAsync(source.Endpoint);
 
         await Task.WhenAll(retrieveTask, getFeedTask);
 
-        source.MostRecentItems = retrieveTask.Result;
+        source.MostRecentItems = await retrieveTask;
 
-        var feed = getFeedTask.Result;
-        source.Name = feed.Title;
+        var feed = await getFeedTask;
+        source.Name = feed.Title;        
 
-        foreach (var item in source.MostRecentItems)
+        Sources[source.Endpoint] = feed.Type switch
         {
-            if (item.Images.Any() is false)
-            {
-                var rssItem = feed.Items.FirstOrDefault(i => i.Link == item.Link);
-                //if (rssItem is { SpecificItem.Element.})
-                //{
-                //
-                //}
-            }
-        }
-
-        Sources[source.Endpoint] = source;
+            FeedType.MediaRss => WithMediaRssImages(source, feed),
+            FeedType.Rss_2_0 => WithRss20Images(source, feed),
+            _ => source
+        };
 
         appState.AppStateChanged();
+
+        return source;
+    }
+
+    private static SourceItem WithRss20Images(SourceItem source, Feed feed)
+    {
+        foreach (var i in feed.SpecificFeed.Items.Cast<Rss20FeedItem>())
+        {
+            if (i.Enclosure is not { } enclosure)
+            {
+                continue;
+            }
+
+            var entry = source.MostRecentItems.FirstOrDefault(mri => mri.Link == i.Link);
+            if (entry is null)
+            {
+                continue;
+            }
+
+            entry.Image = new(enclosure.Url);
+        }
+
+        return source;
+    }
+
+    private static SourceItem WithMediaRssImages(SourceItem source, Feed feed)
+    {
+        foreach (var i in feed.SpecificFeed.Items.Cast<MediaRssFeedItem>())
+        {
+            if (i.Media.FirstOrDefault() is not { } media)
+            {
+                continue;
+            }
+
+            var entry = source.MostRecentItems.FirstOrDefault(mri => mri.Link == i.Link);
+            if (entry is null)
+            {
+                continue;
+            }
+
+            entry.Image = new(media.Url);
+        }
 
         return source;
     }

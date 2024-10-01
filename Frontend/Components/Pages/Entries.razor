@@ -1,11 +1,19 @@
 ﻿@page "/entries/{Slug}"
 @rendermode InteractiveServer
 @inject ISourceProvider sourceProvider
-@inject EntriesPageViewModel viewModel
+@attribute [StreamRendering]
 
-@if(viewModel.SelectedSource is not null)
+<PageTitle>Entries for @selectedSource?.Name</PageTitle>
+
+<h1>Entries for @selectedSource?.Name</h1>
+<p>Here are the entries for the source @selectedSource?.Name.</p>
+
+@if (selectedSource is null)
 {
-    <PageTitle>Entries for @viewModel.SelectedSource?.Name</PageTitle>
+    <p><em>Loading...</em></p>
+    <FluentProgressRing Width="64px"
+                        Stroke="ProgressStroke.Normal"
+                        Color="@(Color.Accent.ToString())" />
 }
 else
 {
@@ -27,8 +35,15 @@ else
                 <FluentStack Orientation="Orientation.Vertical"
                              HorizontalAlignment="HorizontalAlignment.Left"
                              VerticalAlignment="VerticalAlignment.Top">
-                    <img src="@item.Images?.FirstOrDefault()" />
-                    <div style="font-style: italic; font-size: .95em;">@item.GetDisplayDate().Humanize()</div>
+                    @{
+                        var url = item.Image?.ToString()
+                            ?? "https://picsum.photos/350/275?random=420";
+                    }
+                    @* <img src="@($"https://corsproxy.io/?{url}")" alt=@($"Image: {url}") /> *@
+                    @* <Image Source="@url" AltText=@($"Image: {url}") /> *@
+                    <div style="font-style: italic; font-size: .95em;text-transform: uppercase;color: var(--accent-foreground-active)">
+                        @item.GetDisplayDate().Humanize()
+                    </div>
                     <div style="text-decoration: none; font-weight: bold; font-size: 1.2em;">
                         <a target="_blank" href="@item.Link">@item.Title</a>
                     </div>

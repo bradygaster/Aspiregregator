@@ -1,7 +1,7 @@
 ﻿@page "/"
-@rendermode InteractiveServer
-@inject ISourceProvider sourceProvider
-@inject HomePageViewModel viewModel
+@using Humanizer
+@using Aspiregregator.Frontend.ViewModels
+@inject ISourceProvider SourceProvider 
 
 <PageTitle>Aspiregregator</PageTitle>
 
@@ -23,7 +23,11 @@
 
 @code
 {
-    protected override async Task OnInitializedAsync() => await viewModel.RefreshAsync();
+    HomePageViewModel? viewModel;
 
-    protected async Task OnUpdateReceived() => await viewModel.RefreshAsync();
+    protected override async Task OnInitializedAsync()
+    {
+        viewModel = new HomePageViewModel(SourceProvider);
+        await viewModel.RefreshAsync();
+    }
 }
