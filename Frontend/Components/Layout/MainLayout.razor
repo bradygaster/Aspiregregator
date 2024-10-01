@@ -1,10 +1,35 @@
-﻿@inherits LayoutComponentBase
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
 
 <FluentDesignTheme StorageName="theme" Mode="@mode" />
+<FluentDesignTheme @bind-Mode="@mode" StorageName="theme" />
 
 <FluentHeader>
-    <AddNewFeedForm />
-    <FluentDesignTheme @bind-Mode="@mode" StorageName="theme" />
+    <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center">
+        <div style="padding-top: 3px;">Aspiregregator</div>
+        <AuthorizeView>
+            <Authorized>
+                <AddNewFeedForm />
+                <FluentAnchor style="margin-right: 20px;" Href="Account/Manage" Match="NavLinkMatch.All" IconEnd="@(new Icons.Regular.Size20.Person())" Appearance="Appearance.Neutral">My Account</FluentAnchor>
+                <form action="Account/Logout" method="post">
+                    <AntiforgeryToken />
+                    <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                    <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Neutral" IconEnd="@(new Icons.Regular.Size20.SignOut())">Sign out</FluentButton>
+                </form>
+            </Authorized>
+            <NotAuthorized>
+                <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center">
+                    <FluentSpacer />
+                    <div style="padding-top: 3px;">Register or login to add feeds</div>
+                    <FluentSpacer />
+                    <FluentAnchor style="margin-right: 2px;" Href="Account/Register" Match="NavLinkMatch.All" IconEnd="@(new Icons.Regular.Size20.Person())" Appearance="Appearance.Neutral">Register</FluentAnchor>
+                    <FluentAnchor style="margin-right: 2px;" Href="Account/Login" Match="NavLinkMatch.All" IconEnd="@(new Icons.Regular.Size20.LockClosedKey())" Appearance="Appearance.Neutral">Sign in</FluentAnchor>
+                </FluentStack>
+            </NotAuthorized>
+        </AuthorizeView>
+        <FluentSpacer />
+    </FluentStack>
 </FluentHeader>
 <FluentSplitter Class="main" Panel1Size="25%" Orientation="Orientation.Horizontal" Width="100%">
     <Panel1>
@@ -32,4 +57,22 @@
 
 @code {
     DesignThemeModes mode;
+    private string? currentUrl;
+
+    protected override void OnInitialized()
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
 }
