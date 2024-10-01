@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Aspiregregator.Frontend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241001064918_InitialDbCreation")]
-    partial class InitialDbCreation
+    [Migration("20241001071716_IdentitySchemaCreation")]
+    partial class IdentitySchemaCreation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
