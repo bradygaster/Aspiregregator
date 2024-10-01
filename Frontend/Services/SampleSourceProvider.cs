@@ -15,6 +15,9 @@ public sealed class SampleSourceProvider(AppState appState) : ISourceProvider
           //new SourceItem { Endpoint = "https://www.hanselman.com/blog/feed/rss" },
           //new SourceItem { Endpoint = "https://github.com/dotnet/aspire/releases.atom"  }
           //new SourceItem { Endpoint = "https://github.com/dotnet/aspire/commits.atom"  },
+          //new SourceItem { Endpoint = "https://davidpine.net/index.xml"  },
+          //new SourceItem { Endpoint = "https://www.youtube.com/feeds/videos.xml?playlist_id=PLLtasoBlKS8-iLIxN5ITij2Cuxt75uwKs"  },
+
       };
 
     public Task<SourceItem?> GetSourceItemAsync(string endpoint)
