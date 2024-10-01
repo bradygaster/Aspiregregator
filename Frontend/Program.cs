@@ -1,5 +1,4 @@
 using Aspiregregator;
-using Aspiregregator.Frontend.Components;
 using Aspiregregator.Frontend.Components.Account;
 using Aspiregregator.Frontend.Data;
 using Aspiregregator.Frontend.Services;
@@ -17,7 +16,8 @@ builder.AddServiceDefaults();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddFluentUIComponents();
+builder.Services.AddFluentUIComponents(
+    static options => options.UseTooltipServiceProvider = true);
 
 // Add identity components
 builder.Services.AddCascadingAuthenticationState();

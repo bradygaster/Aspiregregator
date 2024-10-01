@@ -2,8 +2,9 @@
 @inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 
-<FluentDesignTheme StorageName="theme" Mode="@mode" />
 <FluentDesignTheme @bind-Mode="@mode" StorageName="theme" />
+
+<FluentTooltipProvider />
 
 <FluentHeader>
     <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center">
@@ -15,7 +16,12 @@
                     <AntiforgeryToken />
                     <input type="hidden" name="ReturnUrl" value="@currentUrl" />
                     <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center">
-                        <FluentAnchor Href="Account/Manage" Match="NavLinkMatch.All" IconEnd="@(new Icons.Regular.Size20.Person())" Appearance="Appearance.Neutral">My Account</FluentAnchor>
+                        <FluentTooltip Anchor="manage" Position="TooltipPosition.Left">
+                            Manage the account profile for @context.User.Identity?.Name.
+                        </FluentTooltip>
+                        <FluentAnchor Href="Account/Manage" Id="manage" IconEnd="@(new Icons.Regular.Size20.Person())" Appearance="Appearance.Neutral">
+                            @context.User.Identity?.Name
+                        </FluentAnchor>
                         <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Neutral" IconEnd="@(new Icons.Regular.Size20.SignOut())">Sign out</FluentButton>
                     </FluentStack>
                 </form>
