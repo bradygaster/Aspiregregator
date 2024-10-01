@@ -3,14 +3,12 @@
 @inject AppState State
 
 <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center">
-    <FluentTextField @bind-Value="FeedUri" Required="true" Style="min-width: 30vw;">
+    <FluentTextField Placeholder="URL of the RSS/ATOM feed you want to add" @bind-Value="FeedUri" Required="true" Style="min-width: 30vw;">
         <FluentIcon Value="@(new Icons.Regular.Size16.Globe())" Slot="start" Color="Color.Neutral" />
     </FluentTextField>
     <FluentButton IconStart="@(new Icons.Regular.Size16.Add())"
                   Appearance="Appearance.Neutral"
                   OnClick="HandleSubmit" />
-    <FluentSpacer />
-    <div style="padding-top: 3px;">Aspiregregator</div>
 </FluentStack>
 
 @code {
