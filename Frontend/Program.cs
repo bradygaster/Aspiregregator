@@ -45,7 +45,6 @@ builder.EnrichSqlServerDbContext<ApplicationDbContext>();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
-
 // Add front end dependencies
 builder.Services.AddSingleton<ISourceProvider, SampleSourceProvider>();
 builder.Services.AddScoped<HomePageViewModel>();
