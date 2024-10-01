@@ -14,10 +14,14 @@
                 <FluentNavLink Href="@string.Format($"entries/{source.GetSlug()}")" Icon="@(new Icons.Regular.Size20.Book())" IconColor="Color.Accent">
                     <div style="display: flex;">
                         <div style="flex-grow: 1; margin: auto;">@source.Name</div>
+                        <FluentButton IconStart="@(new Icons.Regular.Size16.ArrowClockwise())"
+                                      Appearance="Appearance.Neutral"
+                                      Class="mx-05 mr-05"
+                                      OnClick=@(async () => await OnUpdateAsync(source)) />
                         <FluentButton IconStart="@(new Icons.Regular.Size16.Delete())"
                                   Appearance="Appearance.Neutral"
-                                  Style="align-self: flex-end"
-                                  OnClick=@(async () => await OnDeleteSourceAsync(source)) />
+                                  Class="mx-05"
+                                  OnClick="@(async () => await OnDeleteSourceAsync(source))" />
                     </div>
                 </FluentNavLink>
             }
@@ -26,8 +30,6 @@
 </div>
 
 @code {
-
-    private bool expanded = true;
     private IEnumerable<SourceItem> sources = new List<SourceItem>();
 
     protected override async Task OnInitializedAsync()
@@ -54,7 +56,13 @@
         {
             Nav.NavigateTo("/");
         }
-        
+
+        await GetSourcesAsync();
+    }
+
+    private async Task OnUpdateAsync(SourceItem item)
+    {
+        await SourceProvider.UpdateAsync(item);
         await GetSourcesAsync();
     }
 }
