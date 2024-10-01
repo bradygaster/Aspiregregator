@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
 builder.Services.AddFluentUIComponents();
 
 // Add front end dependencies
@@ -17,6 +18,8 @@ builder.Services.AddScoped<HomePageViewModel>();
 builder.Services.AddScoped<EntriesPageViewModel>();
 builder.Services.AddScoped<NavMenuViewModel>();
 builder.Services.AddScoped<AddNewFeedFormViewModel>();
+builder.Services.AddSingleton<AppState>();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
@@ -31,8 +34,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
+
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
-

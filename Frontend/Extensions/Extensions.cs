@@ -9,7 +9,7 @@ public static class SourceItemExtensions
 
     public static IQueryable<EntryItemViewModel> GetRecentEntries(this IEnumerable<SourceItem> sources)
     {
-        List<EntryItemViewModel> entries = new List<EntryItemViewModel>();
+        List<EntryItemViewModel> entries = [];
         foreach (var source in sources)
         {
             foreach (var entry in source.MostRecentItems)
@@ -39,9 +39,9 @@ public static class EntryItemExtensions
 
         if (lastPeriodIndex == -1)
         {
-            return entry.Description.Substring(0, maxLength).Trim() + "...";
+            return entry.Description[..maxLength].Trim() + "...";
         }
 
-        return entry.Description.Substring(0, lastPeriodIndex + 1).Trim();
+        return entry.Description[..(lastPeriodIndex + 1)].Trim();
     }
 }

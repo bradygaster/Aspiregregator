@@ -1,6 +1,6 @@
-﻿@inject ISourceProvider sourceProvider
-@inject NavMenuViewModel viewModel
 @rendermode InteractiveServer
+@inject ISourceProvider SourceProvider
+@inject AppState State
 
 <div class="navmenu" style="width: 100%;">
     <input type="checkbox" title="Menu expand/collapse toggle" id="navmenu-toggle" class="navmenu-icon" />
@@ -23,12 +23,20 @@
 </div>
 
 @code {
-    protected override async Task OnInitializedAsync() 
-        => await viewModel.RefreshSources();
 
-    internal async Task RefreshSources()
+    private bool expanded = true;
+    private IEnumerable<SourceItem> sources = new List<SourceItem>();
+
+    protected override async Task OnInitializedAsync()
     {
-        await viewModel.RefreshSources();
+        await GetSourcesAsync();
+        
+        State.StateChanged += async () => await GetSourcesAsync();
+    }
+
+    internal async Task GetSourcesAsync()
+    {
+        sources = await SourceProvider.GetSourcesAsync();
         await InvokeAsync(StateHasChanged);
     }
 }

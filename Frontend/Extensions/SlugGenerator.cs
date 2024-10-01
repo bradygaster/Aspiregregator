@@ -2,18 +2,27 @@
 
 namespace Aspiregregator.Frontend;
 
-public static class SlugGenerator
+public static partial class SlugGenerator
 {
     public static string GenerateSlug(string incoming)
     {
-        string slug = incoming.ToLowerInvariant();
-        slug = Regex.Replace(slug, @"[^a-z0-9\s-]", "");
-        slug = Regex.Replace(slug, @"\s+", " ").Trim();
+        var slug = incoming.ToLowerInvariant();
+
+        slug = MatchCharacterInSetRegex().Replace(slug, "");
+        slug = WhitespaceRegex().Replace(slug, " ").Trim();
         slug = slug.Replace(" ", "-");
+        
         if (slug.Length > 50)
         {
-            slug = slug.Substring(0, 50).Trim('-');
+            slug = slug[..50].Trim('-');
         }
+
         return slug;
     }
+
+    [GeneratedRegex(@"[^a-z0-9\s-]")]
+    private static partial Regex MatchCharacterInSetRegex();
+    
+    [GeneratedRegex(@"\s+")]    
+    private static partial Regex WhitespaceRegex();
 }
