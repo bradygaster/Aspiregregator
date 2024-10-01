@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FluentUI.AspNetCore.Components;
+using System.Net.Http;
+using System;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +20,8 @@ builder.AddServiceDefaults();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddFluentUIComponents();
+builder.Services.AddFluentUIComponents(
+    static options => options.UseTooltipServiceProvider = true);
 
 // Add identity components
 builder.Services.AddCascadingAuthenticationState();
@@ -87,5 +91,14 @@ app.MapRazorComponents<App>()
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
+
+app.MapGet("api/proxy/image", async ([FromQuery] Uri url, IHttpClientFactory factory) =>
+{
+    var response = await factory.CreateClient().GetAsync(url);
+    var contentType = response.Content.Headers.ContentType?.ToString();
+    var content = await response.Content.ReadAsByteArrayAsync();
+
+    return Results.File(content, contentType);
+});
 
 app.Run();

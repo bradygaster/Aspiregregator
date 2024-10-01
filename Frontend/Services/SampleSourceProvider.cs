@@ -115,4 +115,11 @@ public sealed class SampleSourceProvider(AppState appState) : ISourceProvider
 
         return source;
     }
+
+    public Task RemoveSourceAsync(SourceItem item)
+    {
+        Sources.TryRemove(item.Endpoint, out var _);
+
+        return Task.CompletedTask;
+    }
 }

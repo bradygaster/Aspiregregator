@@ -3,7 +3,7 @@
 @inject IJSRuntime JS
 @inject IHttpClientFactory HttpClientFactory
 
-<img src="@($"https://corsproxy.io/?{Uri.EscapeDataString(Source)}")" alt="@AltText" title="@Title" />
+<img src="@GetProxyImageUrl(Source)" alt="@AltText" title="@Title" class="img card-header" />
 
 @code {
     [Parameter, EditorRequired]
@@ -15,29 +15,8 @@
     [Parameter]
     public string Title { get; set; } = default!;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private string GetProxyImageUrl(string imageUrl)
     {
-        if (firstRender)
-        {
-            // Force state changed.
-            await InvokeAsync(StateHasChanged);
-        }
+        return $"/api/proxy/image?url={Uri.EscapeDataString(imageUrl)}";
     }
-
-    // private async ValueTask<string> GetImageFromStorageAsync()
-    // {
-    //     var base64Image = await JS.GetItemAsync<string?>(Source);
-
-    //     if (string.IsNullOrWhiteSpace(base64Image))
-    //     {
-    //         var client = HttpClientFactory.CreateClient();
-    //         var imageBytes = await client.GetByteArrayAsync(Source);
-
-    //         base64Image = Convert.ToBase64String(imageBytes);
-
-    //         await JS.SetItemAsync(Source, base64Image);
-    //     }
-
-    //     return $"data:image/png;base64,{base64Image}";
-    // }
 }

@@ -39,6 +39,23 @@ body {
     width: 100dvw;
 }
 
+.mx-05 {
+    margin-top: .5rem;
+    margin-bottom: .5rem;
+}
+
+.mr-05 {
+    margin-right: .5rem;
+}
+
+.img.card-header {
+    max-width: 100%;
+    max-height: 150px;
+    object-fit: scale-down;
+    margin: auto;
+    border: .5px solid var(--neutral-base-color);
+}
+
 footer {
     background: var(--neutral-layer-4);
     color: var(--neutral-foreground-rest);
