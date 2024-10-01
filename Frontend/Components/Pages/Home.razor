@@ -1,7 +1,10 @@
 ﻿@page "/"
 @using Humanizer
 @using Aspiregregator.Frontend.ViewModels
-@inject ISourceProvider SourceProvider 
+@rendermode InteractiveServer
+@inject ISourceProvider SourceProvider
+@inject HomePageViewModel viewModel
+@inject AppState State
 
 <PageTitle>Aspiregregator</PageTitle>
 
@@ -19,11 +22,16 @@
 
 @code
 {
-    HomePageViewModel? viewModel;
-
     protected override async Task OnInitializedAsync()
     {
-        viewModel = new HomePageViewModel(SourceProvider);
+        await GetSourcesAsync();
+
+        State.StateChanged += async () => await GetSourcesAsync();
+    }
+
+    internal async Task GetSourcesAsync()
+    {
         await viewModel.RefreshAsync();
+        await InvokeAsync(StateHasChanged);
     }
 }

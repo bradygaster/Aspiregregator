@@ -11,8 +11,7 @@ public class HomePageViewModel(ISourceProvider sourceProvider)
         List<EntryItemViewModel> entries = [];
         foreach (var source in sources)
         {
-            var sourceEntries = await sourceProvider.UpdateAsync(source);
-            foreach (var entry in sourceEntries.MostRecentItems)
+            foreach (var entry in source.MostRecentItems)
             {
                 entries.Add(new EntryItemViewModel(entry, source));
             }
