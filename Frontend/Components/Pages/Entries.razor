@@ -26,17 +26,16 @@ else
     <FluentGrid AdaptiveRendering="true">
         @foreach (var item in viewModel.SelectedSource!.MostRecentItems)
         {
-            <FluentCard Width="400px" Height="250px" style="margin: 10px;">
+            <FluentCard Width="400px" Height="400px" style="margin: 10px;">
 
                 <FluentStack Orientation="Orientation.Vertical"
                              HorizontalAlignment="HorizontalAlignment.Left"
                              VerticalAlignment="VerticalAlignment.Top">
                     @{
                         var url = item.Image?.ToString()
-                        ?? "https://picsum.photos/350/275?random=420";
+                            ?? "https://picsum.photos/350/275?random=420";
                     }
-                    @* <img src="@($"https://corsproxy.io/?{url}")" alt=@($"Image: {url}") /> *@
-                    @* <Image Source="@url" AltText=@($"Image: {url}") /> *@
+                    <Image Source="@url" AltText=@($"Image: {url}") />
                     <div style="font-style: italic; font-size: .95em;text-transform: uppercase;color: var(--accent-foreground-active)">
                         @item.GetDisplayDate().Humanize()
                     </div>
