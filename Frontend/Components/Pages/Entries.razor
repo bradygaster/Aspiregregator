@@ -1,14 +1,12 @@
 ﻿@page "/entries/{Slug}"
 @rendermode InteractiveServer
 @inject ISourceProvider sourceProvider
+@inject EntriesPageViewModel viewModel
 @attribute [StreamRendering]
 
-<PageTitle>Entries for @selectedSource?.Name</PageTitle>
+<PageTitle>Entries for @viewModel.SelectedSource?.Name</PageTitle>
 
-<h1>Entries for @selectedSource?.Name</h1>
-<p>Here are the entries for the source @selectedSource?.Name.</p>
-
-@if (selectedSource is null)
+@if (viewModel.SelectedSource is null)
 {
     <p><em>Loading...</em></p>
     <FluentProgressRing Width="64px"
@@ -20,24 +18,22 @@ else
     <PageTitle>No source selected</PageTitle>
 }
 
-<PageLayout>
-    <BodyContent>
-        @if (viewModel.SelectedSource is not null)
-        {
-            <h1>Entries for @viewModel.SelectedSource?.Name</h1>
-            <p>Here are the entries for the source @viewModel.SelectedSource?.Name.</p>
+@if (viewModel.SelectedSource is not null)
+{
+    <h1>Entries for @viewModel.SelectedSource?.Name</h1>
+    <p>Here are the entries for the source @viewModel.SelectedSource?.Name.</p>
 
-            <FluentGrid AdaptiveRendering="true">
-                @foreach (var item in viewModel.SelectedSource!.MostRecentItems)
-                {
-                    <FluentCard Width="400px" Height="250px" style="margin: 10px;">
+    <FluentGrid AdaptiveRendering="true">
+        @foreach (var item in viewModel.SelectedSource!.MostRecentItems)
+        {
+            <FluentCard Width="400px" Height="250px" style="margin: 10px;">
 
                 <FluentStack Orientation="Orientation.Vertical"
                              HorizontalAlignment="HorizontalAlignment.Left"
                              VerticalAlignment="VerticalAlignment.Top">
                     @{
                         var url = item.Image?.ToString()
-                            ?? "https://picsum.photos/350/275?random=420";
+                        ?? "https://picsum.photos/350/275?random=420";
                     }
                     @* <img src="@($"https://corsproxy.io/?{url}")" alt=@($"Image: {url}") /> *@
                     @* <Image Source="@url" AltText=@($"Image: {url}") /> *@
@@ -50,16 +46,14 @@ else
                     <div>@item.GetTrimmedDescription(255)</div>
                 </FluentStack>
 
-                    </FluentCard>
-                }
-            </FluentGrid>
+            </FluentCard>
         }
-        else
-        {
-            <PageTitle>No source selected</PageTitle>
-        }
-    </BodyContent>
-</PageLayout>
+    </FluentGrid>
+}
+else
+{
+    <PageTitle>No source selected</PageTitle>
+}
 
 @code {
 

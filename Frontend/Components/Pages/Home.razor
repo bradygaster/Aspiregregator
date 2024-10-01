@@ -5,21 +5,17 @@
 
 <PageTitle>Aspiregregator</PageTitle>
 
-<PageLayout UpdateReceived="OnUpdateReceived">
-    <BodyContent>
-        <h1>Recent Updates</h1>
-        <p>Here is a list of recent updates across your feeds.</p>
-        <FluentDataGrid Items="@viewModel?.EntryItems" TGridItem="EntryItemViewModel" ResizableColumns="true">
-            <TemplateColumn TGridItem="EntryItemViewModel" Width="10%" Title="Updated">
-                <div>@context.DisplayDate.Humanize()</div>
-            </TemplateColumn>
-            <PropertyColumn Property="@(p => p.Source)" Sortable="false" Width="25%" />
-            <TemplateColumn TGridItem="EntryItemViewModel" Title="Title">
-                <a target="_blank" href="@context.Link">@context.Title</a>
-            </TemplateColumn>
-        </FluentDataGrid>
-    </BodyContent>
-</PageLayout>
+<h1>Recent Updates</h1>
+<p>Here is a list of recent updates across your feeds.</p>
+<FluentDataGrid Items="@viewModel?.EntryItems" TGridItem="EntryItemViewModel" ResizableColumns="true">
+    <TemplateColumn TGridItem="EntryItemViewModel" Width="10%" Title="Updated">
+        <div>@context.DisplayDate.Humanize()</div>
+    </TemplateColumn>
+    <PropertyColumn Property="@(p => p.Source)" Sortable="false" Width="25%" />
+    <TemplateColumn TGridItem="EntryItemViewModel" Title="Title">
+        <a target="_blank" href="@context.Link">@context.Title</a>
+    </TemplateColumn>
+</FluentDataGrid>
 
 @code
 {

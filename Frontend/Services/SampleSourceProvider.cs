@@ -58,7 +58,7 @@ public sealed class SampleSourceProvider(AppState appState) : ISourceProvider
         source.MostRecentItems = await retrieveTask;
 
         var feed = await getFeedTask;
-        source.Name = feed.Title;        
+        source.Name = feed.Title;
 
         Sources[source.Endpoint] = feed.Type switch
         {
@@ -87,7 +87,8 @@ public sealed class SampleSourceProvider(AppState appState) : ISourceProvider
                 continue;
             }
 
-            entry.Image = new(enclosure.Url);
+            if (enclosure.Url is not null)
+                entry.Image = new(enclosure.Url);
         }
 
         return source;
