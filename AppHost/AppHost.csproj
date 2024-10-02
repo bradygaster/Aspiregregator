@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FeedUpdater\FeedUpdater.csproj" />
     <ProjectReference Include="..\Frontend\Frontend.csproj" />
   </ItemGroup>
 

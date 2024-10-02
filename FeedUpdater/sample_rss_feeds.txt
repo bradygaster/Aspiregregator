@@ -5,3 +5,6 @@ https://devblogs.microsoft.com/visualstudio/feed/
 https://www.hanselman.com/blog/feed/rss
 https://davidpine.net/index.xml
 https://github.com/dotnet/aspire/releases.atom
+https://www.kallemarjokorpi.fi/rss/
+https://nikiforovall.github.io/feed.xml
+https://devblogs.microsoft.com/visualstudio/author/madsk/feed/

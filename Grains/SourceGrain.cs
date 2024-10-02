@@ -1,15 +1,21 @@
-﻿using Aspiregregator.Frontend.Services;
-using Aspirgregator.Abstractions;
+﻿using Aspirgregator.Abstractions;
 using CodeHollow.FeedReader;
 using CodeHollow.FeedReader.Feeds;
 using SimpleRssReader = SimpleFeedReader.FeedReader;
 
 namespace Aspiregregator.Frontend.Grains;
 
-public class SourceGrain(AppState appState,
+public class SourceGrain(
     [PersistentState("FeedSource", storageName: "FeedSource")]
     IPersistentState<SourceItem> source) : Grain, ISourceGrain
 {
+    public override Task OnActivateAsync(CancellationToken cancellationToken)
+    {
+        source.State.Endpoint = this.GetPrimaryKeyString();
+
+        return base.OnActivateAsync(cancellationToken);
+    }
+
     public async Task<IEnumerable<EntryItem>> GetRecentEntries(int pageSize = 10)
     {
         await source.ReadStateAsync();
@@ -62,8 +68,6 @@ public class SourceGrain(AppState appState,
         };
 
         await source.WriteStateAsync();
-
-        appState.AppStateChanged();
 
         return item;
     }

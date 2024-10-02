@@ -4,7 +4,7 @@ public class HomePageViewModel(ISourceProvider sourceProvider)
 {
     public IQueryable<EntryItemViewModel>? EntryItems { get; set; }
     public int PageIndex { get; set; } = 0;
-    public int PageSize { get; set; } = 10;
+    public int PageSize { get; set; } = 20;
 
     public async Task RefreshAsync()
     {

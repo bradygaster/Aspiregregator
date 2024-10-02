@@ -1,9 +1,8 @@
-﻿using Aspiregregator.Frontend.Services;
-using Aspirgregator.Abstractions;
+﻿using Aspirgregator.Abstractions;
 
 namespace Aspiregregator.Frontend.Grains;
 
-public class SourceLibraryGrain(AppState appState,
+public class SourceLibraryGrain(
     [PersistentState("FeedSourceLibrary", storageName: "FeedSourceLibrary")]
     IPersistentState<List<SourceItem>> sources) : Grain, ISourceLibraryGrain
 {
@@ -18,6 +17,16 @@ public class SourceLibraryGrain(AppState appState,
         return tmp.AsEnumerable();
     }
 
+    public async Task<ISourceGrain?> CreateSource(string endpoint)
+    {
+        sources.State.Add(new SourceItem { Endpoint = endpoint, Name = "Untitled" });
+        await sources.WriteStateAsync();
+        var sourceGrain = await GetSourceAsync(endpoint);
+        var source = await sourceGrain!.GetSourceAsync();
+        source = await sourceGrain.UpdateSourceAsync(source);
+        return sourceGrain;
+    }
+
     public async Task<ISourceGrain?> GetSourceAsync(string endpoint)
     {
         await sources.ReadStateAsync();
@@ -26,17 +35,9 @@ public class SourceLibraryGrain(AppState appState,
                 : null;
     }
 
-    public async Task<ISourceGrain?> CreateSource(string endpoint)
-    {
-        sources.State.Add(new SourceItem { Endpoint = endpoint, Name = "Untitled" });
-        await sources.WriteStateAsync();
-        return await GetSourceAsync(endpoint);
-    }
-
     public async Task RemoveSourceAsync(SourceItem item)
     {
         sources.State.RemoveAll(x => x.Endpoint.Equals(item.Endpoint));
         await sources.WriteStateAsync();
-        appState.AppStateChanged();
     }
 }

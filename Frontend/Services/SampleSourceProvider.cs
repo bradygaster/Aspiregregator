@@ -1,22 +1,9 @@
 ﻿using Aspirgregator.Abstractions;
-using System.Collections.Concurrent;
 
 namespace Aspiregregator.Frontend.Services;
 
-public sealed class SampleSourceProvider(IGrainFactory grainFactory) : ISourceProvider
+public sealed class SampleSourceProvider(IGrainFactory grainFactory, AppState appState) : ISourceProvider
 {
-    private readonly ConcurrentDictionary<string, SourceItem> sources =
-      new(StringComparer.OrdinalIgnoreCase)
-      {
-          //new SourceItem { Endpoint = "https://aspireify.net/rss" },
-          //new SourceItem { Endpoint = "https://devblogs.microsoft.com/dotnet/feed/" },
-          //new SourceItem { Endpoint = "https://devblogs.microsoft.com/visualstudio/feed/"  },
-          //new SourceItem { Endpoint = "https://www.hanselman.com/blog/feed/rss" },
-          //new SourceItem { Endpoint = "https://github.com/dotnet/aspire/releases.atom"  }
-          //new SourceItem { Endpoint = "https://github.com/dotnet/aspire/commits.atom"  },
-          //new SourceItem { Endpoint = "https://davidpine.net/index.xml"  }
-      };
-
     public async Task<SourceItem?> GetSourceItemAsync(string endpoint)
     {
         if (grainFactory.GetGrain<ISourceLibraryGrain>(Guid.Empty)
@@ -40,6 +27,8 @@ public sealed class SampleSourceProvider(IGrainFactory grainFactory) : ISourcePr
     {
         await grainFactory.GetGrain<ISourceLibraryGrain>(Guid.Empty)
                           .CreateSource(item.Endpoint);
+
+        appState.AppStateChanged();
     }
 
     public async Task<SourceItem> UpdateAsync(SourceItem source)
@@ -47,11 +36,15 @@ public sealed class SampleSourceProvider(IGrainFactory grainFactory) : ISourcePr
         source = await grainFactory.GetGrain<ISourceGrain>(source.Endpoint)
                                    .UpdateSourceAsync(source);
 
+        appState.AppStateChanged();
+
         return source;
     }
 
     public async Task RemoveSourceAsync(SourceItem item)
     {
         await grainFactory.GetGrain<ISourceLibraryGrain>(Guid.Empty).RemoveSourceAsync(item);
+
+        appState.AppStateChanged();
     }
 }

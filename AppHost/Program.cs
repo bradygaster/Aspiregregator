@@ -18,4 +18,7 @@ builder.AddProject<Projects.Frontend>("frontend")
        .WithReference(identityDb)
        .WithReference(orleans);
 
+builder.AddProject<Projects.FeedUpdater>("feedupdater")
+       .WithReference(orleans);
+
 builder.Build().Run();

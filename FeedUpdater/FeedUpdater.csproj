@@ -21,4 +21,10 @@
 		<ProjectReference Include="..\Defaults\Defaults.csproj" />
 		<ProjectReference Include="..\Grains\Grains.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="sample_rss_feeds.txt">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 </Project>
