@@ -2,6 +2,7 @@
 @using Humanizer
 @using Aspiregregator.Frontend.ViewModels
 @rendermode InteractiveServer
+@implements IDisposable
 @inject ISourceProvider SourceProvider
 @inject HomePageViewModel viewModel
 @inject AppState State
@@ -19,14 +20,41 @@
         <a target="_blank" href="@context.Link">@context.Title</a>
     </TemplateColumn>
 </FluentDataGrid>
-
+<FluentButton IconStart="@(new Icons.Regular.Size20.ArrowDown())"
+              Appearance="Appearance.Accent"
+              Class="mx-05 mr-05"
+              OnClick=@LoadMore>More</FluentButton>
+<FluentButton IconStart="@(new Icons.Regular.Size20.ArrowUp())"
+              Appearance="Appearance.Accent"
+              Class="mx-05 mr-05"
+              OnClick=@LoadLess>Less</FluentButton>
 @code
 {
+    protected async Task LoadMore()
+    {
+        viewModel.PageSize += 10;
+        await GetSourcesAsync();
+    }
+
+    protected async Task LoadLess()
+    {
+        if (viewModel.PageSize >= 20)
+        {
+            viewModel.PageSize -= 10;
+            await GetSourcesAsync();
+        } 
+    }
+
     protected override async Task OnInitializedAsync()
     {
         await GetSourcesAsync();
 
         State.StateChanged += async () => await GetSourcesAsync();
+    }
+
+    public void Dispose()
+    {
+        State.StateChanged -= async () => await GetSourcesAsync();
     }
 
     internal async Task GetSourcesAsync()

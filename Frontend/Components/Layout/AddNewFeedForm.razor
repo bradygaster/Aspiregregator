@@ -1,46 +1,12 @@
 @rendermode InteractiveServer
 @inject ISourceProvider SourceProvider
-@inject AppState State
+@inject AddNewFeedFormViewModel viewModel
 
 <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center">
-    <FluentTextField Placeholder="URL of the RSS/ATOM feed you want to add" @bind-Value="FeedUri" Required="true" Style="min-width: 30vw;">
+    <FluentTextField Placeholder="URL of the RSS/ATOM feed you want to add" @bind-Value="viewModel.FeedUri" Required="true" Style="min-width: 30vw;">
         <FluentIcon Value="@(new Icons.Regular.Size16.Globe())" Slot="start" Color="Color.Neutral" />
     </FluentTextField>
     <FluentButton IconStart="@(new Icons.Regular.Size16.Add())"
                   Appearance="Appearance.Neutral"
-                  OnClick="HandleSubmit" />
+                  OnClick="viewModel.HandleSubmit" />
 </FluentStack>
-
-@code {
-
-    public string FeedUri { get; set; } = string.Empty;
-
-    public async Task HandleSubmit()
-    {
-        if (IsValidUrl())
-        {
-            var newSource = new SourceItem { Endpoint = FeedUri };
-            await SourceProvider.SaveSourceItemAsync(newSource);
-            await SourceProvider.UpdateAsync(newSource);
-            FeedUri = string.Empty;
-            
-            State.AppStateChanged();
-        }
-    }
-
-    public bool IsValidUrl()
-    {
-        if (string.IsNullOrWhiteSpace(FeedUri))
-        {
-            return false;
-        }
-
-        if (Uri.TryCreate(FeedUri, UriKind.Absolute, out Uri? uriResult) &&
-            (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
-        {
-            return true;
-        }
-
-        return false;
-    }
-}
