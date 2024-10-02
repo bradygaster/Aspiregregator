@@ -20,6 +20,10 @@
         <a target="_blank" href="@context.Link">@context.Title</a>
     </TemplateColumn>
 </FluentDataGrid>
+<FluentButton IconStart="@(new Icons.Regular.Size20.ArrowLeft())"
+              Appearance="Appearance.Accent"
+              Class="mx-05 mr-05"
+              OnClick=@LoadNewer>Newer</FluentButton>
 <FluentButton IconStart="@(new Icons.Regular.Size20.ArrowDown())"
               Appearance="Appearance.Accent"
               Class="mx-05 mr-05"
@@ -28,6 +32,10 @@
               Appearance="Appearance.Accent"
               Class="mx-05 mr-05"
               OnClick=@LoadLess>Less</FluentButton>
+<FluentButton IconStart="@(new Icons.Regular.Size20.ArrowRight())"
+              Appearance="Appearance.Accent"
+              Class="mx-05 mr-05"
+              OnClick=@LoadOlder>Older</FluentButton>
 @code
 {
     protected async Task LoadMore()
@@ -36,13 +44,27 @@
         await GetSourcesAsync();
     }
 
+    protected async Task LoadNewer()
+    {
+        if (viewModel.PageIndex >= 0)
+        {
+            viewModel.PageIndex -= 1;
+            await GetSourcesAsync();
+        }
+    }
+
     protected async Task LoadLess()
     {
         if (viewModel.PageSize >= 20)
         {
             viewModel.PageSize -= 10;
             await GetSourcesAsync();
-        } 
+        }
+    }
+    protected async Task LoadOlder()
+    {
+        viewModel.PageIndex += 1;
+        await GetSourcesAsync();
     }
 
     protected override async Task OnInitializedAsync()
