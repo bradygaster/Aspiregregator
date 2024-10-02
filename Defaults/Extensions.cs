@@ -51,15 +51,19 @@ namespace Microsoft.Extensions.Hosting
             builder.Services.AddOpenTelemetry()
                 .WithMetrics(metrics =>
                 {
-                    metrics.AddAspNetCoreInstrumentation()
+                    metrics
+                        .AddAspNetCoreInstrumentation()
                         .AddHttpClientInstrumentation()
-                        .AddRuntimeInstrumentation();
+                        .AddRuntimeInstrumentation()
+                        .AddMeter("Microsoft.Orleans");
                 })
                 .WithTracing(tracing =>
                 {
-                    tracing.AddAspNetCoreInstrumentation()
-                        // Uncomment the following line to enable gRPC instrumentation (requires the OpenTelemetry.Instrumentation.GrpcNetClient package)
-                        //.AddGrpcClientInstrumentation()
+                    tracing.AddSource("Microsoft.Orleans.Runtime");
+                    tracing.AddSource("Microsoft.Orleans.Application");
+
+                    tracing
+                        .AddAspNetCoreInstrumentation()
                         .AddHttpClientInstrumentation();
                 });
 

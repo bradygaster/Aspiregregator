@@ -1,15 +1,14 @@
-﻿using CodeHollow.FeedReader;
-using CodeHollow.FeedReader.Feeds;
-using SimpleRssReader = SimpleFeedReader.FeedReader;
+﻿using Aspirgregator.Abstractions;
 using System.Collections.Concurrent;
 
 namespace Aspiregregator.Frontend.Services;
 
-public sealed class SampleSourceProvider(AppState appState) : ISourceProvider
+public sealed class SampleSourceProvider(IGrainFactory grainFactory) : ISourceProvider
 {
-    private readonly ConcurrentDictionary<string, SourceItem> Sources =
+    private readonly ConcurrentDictionary<string, SourceItem> sources =
       new(StringComparer.OrdinalIgnoreCase)
       {
+          //new SourceItem { Endpoint = "https://aspireify.net/rss" },
           //new SourceItem { Endpoint = "https://devblogs.microsoft.com/dotnet/feed/" },
           //new SourceItem { Endpoint = "https://devblogs.microsoft.com/visualstudio/feed/"  },
           //new SourceItem { Endpoint = "https://www.hanselman.com/blog/feed/rss" },
@@ -18,108 +17,41 @@ public sealed class SampleSourceProvider(AppState appState) : ISourceProvider
           //new SourceItem { Endpoint = "https://davidpine.net/index.xml"  }
       };
 
-    public Task<SourceItem?> GetSourceItemAsync(string endpoint)
-      => Task.FromResult(Sources.TryGetValue(endpoint, out var item) ? item : null);
-
-    public Task<IEnumerable<SourceItem>> GetSourcesAsync()
-      => Task.FromResult(Sources.Values.OrderBy(x => x.Name).AsEnumerable());
-
-    public Task SaveSourceItemAsync(SourceItem item)
+    public async Task<SourceItem?> GetSourceItemAsync(string endpoint)
     {
-        Sources[item.Endpoint] = item;
+        if (grainFactory.GetGrain<ISourceLibraryGrain>(Guid.Empty)
+                        .GetSourceAsync(endpoint) is not null)
+        {
+            return await grainFactory.GetGrain<ISourceGrain>(endpoint)
+                                     .GetSourceAsync();
+        }
 
-        return Task.CompletedTask;
+        return null;
+    }
+
+    public async Task<IEnumerable<SourceItem>> GetSourcesAsync()
+      => (await grainFactory.GetGrain<ISourceLibraryGrain>(Guid.Empty)
+                            .GetSourcesAsync())
+                                .OrderBy(x => x.Name)
+                                .AsEnumerable();
+
+
+    public async Task SaveSourceItemAsync(SourceItem item)
+    {
+        await grainFactory.GetGrain<ISourceLibraryGrain>(Guid.Empty)
+                          .CreateSource(item.Endpoint);
     }
 
     public async Task<SourceItem> UpdateAsync(SourceItem source)
     {
-        var retrieveTask = Task.Run<List<EntryItem>>(() =>
-        {
-            var reader = new SimpleRssReader();
-            var feedItems = reader.RetrieveFeed(source.Endpoint);
-
-            return
-            [
-              ..feedItems.Select(x => new EntryItem
-                {
-                  Title = x.Title,
-                  Description = x.Summary,
-                  Link = x.Uri.AbsoluteUri,
-                  PublishDate = x.PublishDate,
-                  UpdatedDate = x.LastUpdatedDate,
-                  Image = x.Images?.FirstOrDefault()
-                })
-            ];
-        });
-
-        var getFeedTask = FeedReader.ReadAsync(source.Endpoint);
-
-        await Task.WhenAll(retrieveTask, getFeedTask);
-
-        source.MostRecentItems = await retrieveTask;
-
-        var feed = await getFeedTask;
-        source.Name = feed.Title;
-
-        Sources[source.Endpoint] = feed.Type switch
-        {
-            FeedType.MediaRss => WithMediaRssImages(source, feed),
-            FeedType.Rss_2_0 => WithRss20Images(source, feed),
-            _ => source
-        };
-
-        appState.AppStateChanged();
+        source = await grainFactory.GetGrain<ISourceGrain>(source.Endpoint)
+                                   .UpdateSourceAsync(source);
 
         return source;
     }
 
-    private static SourceItem WithRss20Images(SourceItem source, Feed feed)
+    public async Task RemoveSourceAsync(SourceItem item)
     {
-        foreach (var i in feed.SpecificFeed.Items.Cast<Rss20FeedItem>())
-        {
-            if (i.Enclosure is not { } enclosure)
-            {
-                continue;
-            }
-
-            var entry = source.MostRecentItems.FirstOrDefault(mri => mri.Link == i.Link);
-            if (entry is null)
-            {
-                continue;
-            }
-
-            if (enclosure.Url is not null)
-                entry.Image = new(enclosure.Url);
-        }
-
-        return source;
-    }
-
-    private static SourceItem WithMediaRssImages(SourceItem source, Feed feed)
-    {
-        foreach (var i in feed.SpecificFeed.Items.Cast<MediaRssFeedItem>())
-        {
-            if (i.Media.FirstOrDefault() is not { } media)
-            {
-                continue;
-            }
-
-            var entry = source.MostRecentItems.FirstOrDefault(mri => mri.Link == i.Link);
-            if (entry is null)
-            {
-                continue;
-            }
-
-            entry.Image = new(media.Url);
-        }
-
-        return source;
-    }
-
-    public Task RemoveSourceAsync(SourceItem item)
-    {
-        Sources.TryRemove(item.Endpoint, out var _);
-
-        return Task.CompletedTask;
+        await grainFactory.GetGrain<ISourceLibraryGrain>(Guid.Empty).RemoveSourceAsync(item);
     }
 }

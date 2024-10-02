@@ -3,6 +3,8 @@
 public class HomePageViewModel(ISourceProvider sourceProvider)
 {
     public IQueryable<EntryItemViewModel>? EntryItems { get; set; }
+    public int PageIndex { get; set; } = 0;
+    public int PageSize { get; set; } = 10;
 
     public async Task RefreshAsync()
     {
@@ -17,6 +19,9 @@ public class HomePageViewModel(ISourceProvider sourceProvider)
             }
         }
 
-        EntryItems = entries.OrderByDescending(x => x.DisplayDate).AsQueryable();
+        EntryItems = entries.OrderByDescending(x => x.DisplayDate)
+            .AsQueryable()
+            .Skip(PageIndex * PageSize)
+            .Take(PageSize);
     }
 }

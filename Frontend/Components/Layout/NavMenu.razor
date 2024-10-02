@@ -1,4 +1,5 @@
 @rendermode InteractiveServer
+@implements IDisposable
 @inject ISourceProvider SourceProvider
 @inject NavigationManager Nav
 @inject AppState State
@@ -39,6 +40,11 @@
         State.StateChanged += async () => await GetSourcesAsync();
     }
 
+    public void Dispose()
+    {
+        State.StateChanged -= async () => await GetSourcesAsync();
+    }
+
     internal async Task GetSourcesAsync()
     {
         sources = await SourceProvider.GetSourcesAsync();
@@ -56,8 +62,6 @@
         {
             Nav.NavigateTo("/");
         }
-
-        await GetSourcesAsync();
     }
 
     private async Task OnUpdateAsync(SourceItem item)
