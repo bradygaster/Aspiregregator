@@ -1,8 +1,9 @@
-﻿using Aspirgregator.Abstractions;
+﻿using Aspiregregator.Frontend.Services;
+using Aspirgregator.Abstractions;
 
 namespace Aspiregregator.Frontend.Grains;
 
-public class SourceLibraryGrain(
+public class SourceLibraryGrain(AppState appState,
     [PersistentState("FeedSourceLibrary", storageName: "FeedSourceLibrary")]
     IPersistentState<List<SourceItem>> sources) : Grain, ISourceLibraryGrain
 {
@@ -34,7 +35,8 @@ public class SourceLibraryGrain(
 
     public async Task RemoveSourceAsync(SourceItem item)
     {
-        sources.State.Remove(item);
+        sources.State.RemoveAll(x => x.Endpoint.Equals(item.Endpoint));
         await sources.WriteStateAsync();
+        appState.AppStateChanged();
     }
 }
