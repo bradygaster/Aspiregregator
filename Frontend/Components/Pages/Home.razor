@@ -2,6 +2,7 @@
 @using Humanizer
 @using Aspiregregator.Frontend.ViewModels
 @rendermode InteractiveServer
+@implements IDisposable
 @inject ISourceProvider SourceProvider
 @inject HomePageViewModel viewModel
 @inject AppState State
@@ -27,6 +28,11 @@
         await GetSourcesAsync();
 
         State.StateChanged += async () => await GetSourcesAsync();
+    }
+
+    public void Dispose()
+    {
+        State.StateChanged -= async () => await GetSourcesAsync();
     }
 
     internal async Task GetSourcesAsync()
