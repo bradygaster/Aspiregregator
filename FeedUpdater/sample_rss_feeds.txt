@@ -1,0 +1,7 @@
+https://github.com/bradygaster/aspiregregator/commits.atom
+https://aspireify.net/rss
+https://devblogs.microsoft.com/dotnet/feed/
+https://devblogs.microsoft.com/visualstudio/feed/
+https://www.hanselman.com/blog/feed/rss
+https://davidpine.net/index.xml
+https://github.com/dotnet/aspire/releases.atom
