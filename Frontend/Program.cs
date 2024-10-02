@@ -6,11 +6,9 @@ using Aspiregregator.Frontend.Services;
 using Aspiregregator.Frontend.ViewModels;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FluentUI.AspNetCore.Components;
-using System.Net.Http;
-using System;
-using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +55,8 @@ builder.Services.AddScoped<NavMenuViewModel>();
 builder.Services.AddScoped<AddNewFeedFormViewModel>();
 builder.Services.AddSingleton<AppState>();
 builder.Services.AddHttpClient();
+
+builder.AddOrleans();
 
 var app = builder.Build();
 
