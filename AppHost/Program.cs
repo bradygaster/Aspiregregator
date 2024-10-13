@@ -1,6 +1,8 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var sqlserver = builder.AddSqlServer("sqlserver");
+var sqlserver = builder.AddSqlServer("sqlserver")
+                       .PublishAsAzureSqlDatabase();
+
 var identityDb = sqlserver.AddDatabase("IdentityDb");
 
 var storage = builder.AddAzureStorage("storage")
@@ -14,11 +16,12 @@ var orleans = builder.AddOrleans("orleans-cluster")
                      .WithGrainStorage("FeedSourceLibrary", grainStorage)
                      .WithGrainStorage("FeedSource", grainStorage);
 
-builder.AddProject<Projects.Frontend>("frontend")
-       .WithReference(identityDb)
-       .WithReference(orleans);
-
 builder.AddProject<Projects.FeedUpdater>("feedupdater")
        .WithReference(orleans);
+
+builder.AddProject<Projects.Frontend>("frontend")
+       .WithReference(identityDb)
+       .WithReference(orleans)
+       .WithExternalHttpEndpoints();
 
 builder.Build().Run();

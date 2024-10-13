@@ -1,15 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UserSecretsId>dotnet-FeedUpdater-425ed0e7-ac3b-436d-bcb0-ba5b5ed55ccd</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Aspire.Azure.Data.Tables" Version="8.2.1" />
-		<PackageReference Include="Aspire.Azure.Storage.Blobs" Version="8.2.1" />
+		<PackageReference Include="Aspire.Azure.Data.Tables" Version="9.0.0-rc.1.24511.1" />
+		<PackageReference Include="Aspire.Azure.Storage.Blobs" Version="9.0.0-rc.1.24511.1" />
 		<PackageReference Include="Microsoft.Orleans.Clustering.AzureStorage" Version="8.2.0" />
 		<PackageReference Include="Microsoft.Orleans.Persistence.AzureStorage" Version="8.2.0" />
 		<PackageReference Include="Microsoft.Orleans.Sdk" Version="8.2.0" />
@@ -23,8 +23,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="sample_rss_feeds.txt">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+		<None Update="sample_rss_feeds.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 </Project>
