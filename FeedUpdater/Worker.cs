@@ -4,6 +4,9 @@ namespace FeedUpdater;
 
 public class Worker(ILogger<Worker> logger, IGrainFactory grainFactory) : BackgroundService
 {
+    //static TimeSpan _updateInterval = TimeSpan.FromMinutes(5);
+    static TimeSpan _updateInterval = TimeSpan.FromSeconds(30);
+
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
         var sourceLibraryGrain = grainFactory.GetGrain<ISourceLibraryGrain>(Guid.Empty);
@@ -43,7 +46,7 @@ public class Worker(ILogger<Worker> logger, IGrainFactory grainFactory) : Backgr
                 }
             }
 
-            await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
+            await Task.Delay(_updateInterval, stoppingToken);
         }
     }
 }
