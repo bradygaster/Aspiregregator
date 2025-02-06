@@ -2,7 +2,6 @@
 @rendermode InteractiveServer
 @inject ISourceProvider sourceProvider
 @inject EntriesPageViewModel viewModel
-@attribute [StreamRendering]
 
 <PageTitle>Entries for @viewModel.SelectedSource?.Name</PageTitle>
 
@@ -23,30 +22,7 @@ else
     <h1>Entries for @viewModel.SelectedSource?.Name</h1>
     <p>Here are the entries for the source @viewModel.SelectedSource?.Name.</p>
 
-    <FluentGrid AdaptiveRendering="true">
-        @foreach (var item in viewModel.SelectedSource!.MostRecentItems)
-        {
-            <FluentCard Width="400px" Height="400px" style="margin: 10px;">
-
-                <FluentStack Orientation="Orientation.Vertical"
-                HorizontalAlignment="HorizontalAlignment.Left"
-                VerticalAlignment="VerticalAlignment.Top">
-                    @if (item.Image is not null && CleanImageUrl(item.Image.AbsoluteUri) is not null)
-                    {
-                        <Image Source="@item.Image.AbsoluteUri" AltText=@($"Image: {item.Image.AbsoluteUri}") />
-                    }
-                    <div style="font-style: italic; font-size: .95em;text-transform: uppercase;color: var(--accent-foreground-active)">
-                        @item.GetDisplayDate().Humanize()
-                    </div>
-                    <div style="text-decoration: none; font-weight: bold; font-size: 1.2em;">
-                        <a target="_blank" href="@item.Link">@item.Title</a>
-                    </div>
-                    <div>@item.GetTrimmedDescription(255)</div>
-                </FluentStack>
-
-            </FluentCard>
-        }
-    </FluentGrid>
+    <EntryList EntryItems="@viewModel.SelectedSource!.MostRecentItems.AsQueryable()"/>
 }
 else
 {

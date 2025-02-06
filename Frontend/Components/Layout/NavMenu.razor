@@ -1,4 +1,3 @@
-@using Microsoft.AspNetCore.Components.Authorization
 @rendermode InteractiveServer
 @implements IDisposable
 @inject ISourceProvider SourceProvider
@@ -16,19 +15,10 @@
                 <FluentNavLink Href="@string.Format($"entries/{source.GetSlug()}")" Icon="@(new Icons.Regular.Size20.Book())" IconColor="Color.Accent">
                     <div style="display: flex;">
                         <div style="flex-grow: 1; margin: auto;">@source.Name</div>
-                        <FluentButton IconStart="@(new Icons.Regular.Size16.ArrowClockwise())"
+                        <FluentButton IconStart="@(new Icons.Regular.Size16.Delete())"
                                       Appearance="Appearance.Neutral"
                                       Class="mx-05"
-                                      OnClick=@(async () => await OnUpdateAsync(source)) />
-                        <AuthorizeView>
-                            <Authorized>
-                                <FluentButton IconStart="@(new Icons.Regular.Size16.Delete())"
-                                              Appearance="Appearance.Neutral"
-                                              Class="mx-05"
-                                              OnClick="@(async () => await OnDeleteSourceAsync(source))" />
-                            </Authorized>
-                            <NotAuthorized></NotAuthorized>
-                        </AuthorizeView>
+                                      OnClick="@(async () => await OnDeleteSourceAsync(source))" />
                     </div>
                 </FluentNavLink>
             }

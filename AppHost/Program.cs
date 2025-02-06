@@ -1,10 +1,5 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var sqlserver = builder.AddSqlServer("sqlserver")
-                       .PublishAsAzureSqlDatabase();
-
-var identityDb = sqlserver.AddDatabase("IdentityDb");
-
 var storage = builder.AddAzureStorage("storage")
                      .RunAsEmulator();
 
@@ -20,7 +15,6 @@ builder.AddProject<Projects.FeedUpdater>("feedupdater")
        .WithReference(orleans);
 
 builder.AddProject<Projects.Frontend>("frontend")
-       .WithReference(identityDb)
        .WithReference(orleans)
        .WithExternalHttpEndpoints();
 

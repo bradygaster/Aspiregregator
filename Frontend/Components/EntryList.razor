@@ -1,0 +1,38 @@
+﻿@if (EntryItems is not null)
+{
+    <FluentGrid AdaptiveRendering="true">
+        @foreach (var item in EntryItems!)
+        {
+            <FluentCard Width="400px" Height="400px" style="margin: 10px;">
+                <FluentStack Orientation="Orientation.Vertical"
+                             HorizontalAlignment="HorizontalAlignment.Left"
+                             VerticalAlignment="VerticalAlignment.Top">
+                    @if (item.Image is not null && CleanImageUrl(item.Image.AbsoluteUri) is not null)
+                    {
+                        <Image Source="@item.Image.AbsoluteUri" AltText=@($"Image: {item.Image.AbsoluteUri}") />
+                    }
+                    <div style="font-style: italic; font-size: .95em;text-transform: uppercase;color: var(--accent-foreground-active)">
+                        @item.GetDisplayDate().Humanize()
+                    </div>
+                    <div style="text-decoration: none; font-weight: bold; font-size: 1.2em;">
+                        <a target="_blank" href="@item.Link">@item.Title</a>
+                    </div>
+                    <div>@item.GetTrimmedDescription(255)</div>
+                </FluentStack>
+
+            </FluentCard>
+        }
+    </FluentGrid>
+}
+
+@code {
+    [Parameter]
+    public IQueryable<EntryItem>? EntryItems { get; set; }
+
+    private string? CleanImageUrl(string originalUrl)
+    {
+        // todo: monitor image display bugs and use this method to clean the absolute uris
+        if (originalUrl.EndsWith("mp4")) return null;
+        else return originalUrl;
+    }
+}

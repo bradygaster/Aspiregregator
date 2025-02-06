@@ -9,33 +9,7 @@
 <FluentHeader>
     <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center">
         <div style="padding-top: 3px;">Aspiregregator</div>
-        <AuthorizeView>
-            <Authorized>
-                <AddNewFeedForm />
-                <form action="Account/Logout" method="post">
-                    <AntiforgeryToken />
-                    <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                    <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center">
-                        <FluentTooltip Anchor="manage" Position="TooltipPosition.Left">
-                            Manage the account profile for @context.User.Identity?.Name.
-                        </FluentTooltip>
-                        <FluentAnchor Href="Account/Manage" Id="manage" IconEnd="@(new Icons.Regular.Size20.Person())" Appearance="Appearance.Neutral">
-                            @context.User.Identity?.Name
-                        </FluentAnchor>
-                        <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Neutral" IconEnd="@(new Icons.Regular.Size20.SignOut())">Sign out</FluentButton>
-                    </FluentStack>
-                </form>
-            </Authorized>
-            <NotAuthorized>
-                <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center">
-                    <FluentSpacer />
-                    <div style="padding-top: 3px;">Register or login to add feeds</div>
-                    <FluentSpacer />
-                    <FluentAnchor style="margin-right: 12px;" Href="Account/Register" Match="NavLinkMatch.All" IconEnd="@(new Icons.Regular.Size20.Person())" Appearance="Appearance.Neutral">Register</FluentAnchor>
-                    <FluentAnchor style="margin-right: 2px;" Href="Account/Login" Match="NavLinkMatch.All" IconEnd="@(new Icons.Regular.Size20.LockClosedKey())" Appearance="Appearance.Neutral">Sign in</FluentAnchor>
-                </FluentStack>
-            </NotAuthorized>
-        </AuthorizeView>
+        <AddNewFeedForm />
         <FluentSpacer />
     </FluentStack>
 </FluentHeader>
@@ -65,22 +39,4 @@
 
 @code {
     DesignThemeModes mode;
-    private string? currentUrl;
-
-    protected override void OnInitialized()
-    {
-        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-        NavigationManager.LocationChanged += OnLocationChanged;
-    }
-
-    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
-    {
-        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
-        StateHasChanged();
-    }
-
-    public void Dispose()
-    {
-        NavigationManager.LocationChanged -= OnLocationChanged;
-    }
 }

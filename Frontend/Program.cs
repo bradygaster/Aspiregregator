@@ -1,13 +1,8 @@
 using Aspiregregator;
 using Aspiregregator.Frontend.Components;
-using Aspiregregator.Frontend.Components.Account;
-using Aspiregregator.Frontend.Data;
 using Aspiregregator.Frontend.Services;
 using Aspiregregator.Frontend.ViewModels;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.FluentUI.AspNetCore.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,32 +15,6 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddFluentUIComponents(
     static options => options.UseTooltipServiceProvider = true);
-
-// Add identity components
-builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddScoped<IdentityUserAccessor>();
-builder.Services.AddScoped<IdentityRedirectManager>();
-builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = IdentityConstants.ApplicationScheme;
-    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-})
-    .AddIdentityCookies();
-
-var connectionString = builder.Configuration.GetConnectionString("IdentityDb") ?? throw new InvalidOperationException("Connection string 'IdentityDb' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddSignInManager()
-    .AddDefaultTokenProviders();
-
-builder.EnrichSqlServerDbContext<ApplicationDbContext>();
-
-builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 // Add front end dependencies
 builder.Services.AddSingleton<ISourceProvider, SampleSourceProvider>();
@@ -66,8 +35,8 @@ app.MapDefaultEndpoints();
 // Learn more at https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/applying?tabs=dotnet-core-cli#apply-migrations-at-runtime
 await using (var scope = app.Services.CreateAsyncScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    await db.Database.MigrateAsync();
+    //var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    //await db.Database.MigrateAsync();
 }
 
 // Configure the HTTP request pipeline.
@@ -88,9 +57,6 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
-
-// Add additional endpoints required by the Identity /Account Razor components.
-app.MapAdditionalIdentityEndpoints();
 
 app.MapGet("api/proxy/image", async ([FromQuery] Uri url, IHttpClientFactory factory) =>
 {

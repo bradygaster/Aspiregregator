@@ -46,7 +46,8 @@ public class SourceGrain(
                   Link = x.Uri.AbsoluteUri,
                   PublishDate = x.PublishDate,
                   UpdatedDate = x.LastUpdatedDate,
-                  Image = x.Images?.FirstOrDefault()
+                  Image = x.Images?.FirstOrDefault(),
+                  Source = item
                 })
             ];
         });

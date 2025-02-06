@@ -2,7 +2,7 @@
 
 public class HomePageViewModel(ISourceProvider sourceProvider)
 {
-    public IQueryable<EntryItemViewModel>? EntryItems { get; set; }
+    public IQueryable<EntryItem>? EntryItems { get; set; }
     public int PageIndex { get; set; } = 0;
     public int PageSize { get; set; } = 20;
 
@@ -10,16 +10,12 @@ public class HomePageViewModel(ISourceProvider sourceProvider)
     {
         var sources = await sourceProvider.GetSourcesAsync();
 
-        List<EntryItemViewModel> entries = [];
-        foreach (var source in sources)
-        {
-            foreach (var entry in source.MostRecentItems)
-            {
-                entries.Add(new EntryItemViewModel(entry, source));
-            }
-        }
+        List<EntryItem> entries = [];
 
-        EntryItems = entries.OrderByDescending(x => x.DisplayDate)
+        foreach (var source in sources)
+            foreach (var entry in source.MostRecentItems) entries.Add(entry);
+
+        EntryItems = entries.OrderByDescending(x => x.UpdatedDate)
             .AsQueryable()
             .Skip(PageIndex * PageSize)
             .Take(PageSize);

@@ -20,7 +20,6 @@
 		<PackageReference Include="Microsoft.Orleans.Sdk" Version="8.2.0" />
 		<PackageReference Include="Microsoft.Orleans.Server" Version="8.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.8" />
-		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0-rtm.24511.3" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0-rtm.24511.3">
 			<PrivateAssets>all</PrivateAssets>

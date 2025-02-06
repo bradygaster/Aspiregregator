@@ -14,7 +14,7 @@ public static class SourceItemExtensions
         {
             foreach (var entry in source.MostRecentItems)
             {
-                entries.Add(new EntryItemViewModel(entry, source));
+                entries.Add(new EntryItemViewModel(entry));
             }
         }
 

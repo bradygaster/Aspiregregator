@@ -15,4 +15,6 @@ public class EntryItem
     public DateTimeOffset UpdatedDate { get; set; }
     [Id(5)]
     public Uri? Image { get; set; }
+    [Id(7)]
+    public SourceItem? Source { get; set; }
 }
