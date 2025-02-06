@@ -3,7 +3,6 @@
 @using Aspiregregator.Frontend.ViewModels
 @rendermode InteractiveServer
 @implements IDisposable
-@inject ISourceProvider SourceProvider
 @inject HomePageViewModel viewModel
 @inject AppState State
 @inject IJSRuntime JS
@@ -17,14 +16,14 @@
 <FluentButton IconStart="@(new Icons.Regular.Size20.ArrowRight())"
               Appearance="Appearance.Accent"
               Class="mx-05 mr-05"
-              OnClick=@LoadOlder>Older</FluentButton>
+              OnClick=@LoadOlder>More</FluentButton>
 @code
 {
     protected async Task LoadOlder()
     {
-        viewModel.PageIndex += 1;
+        viewModel.PageSize += 10;
         await GetSourcesAsync();
-    }
+    } 
 
     protected override async Task OnInitializedAsync()
     {
