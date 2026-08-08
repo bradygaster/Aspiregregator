@@ -1,5 +1,6 @@
 ---
 name: Squad
+run-name: "Squad — ${{ github.event.inputs.command || github.event.comment.body || github.event.issue.title || 'run' }}"
 description: Cast, connect, or adopt a Squad AI team for your repository
 emoji: "🧑‍🤝‍🧑"
 private: false
@@ -50,7 +51,7 @@ safe-outputs:
     max: 20
   add-comment:
     max: 10
-source: bradygaster/squad/workflows/squad.md@c84dc205044e1fe1bccf6251162794320f679cdf
+source: bradygaster/squad/workflows/squad.md@fd18ec97a0e27aa91ba415c309b4e8f69077f3c4
 ---
 
 # Squad — Unified `/squad` Slash Command
